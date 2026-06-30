@@ -16,7 +16,7 @@ namespace QuanLyKhoHang
         // 2. Viết hàm lấy dữ liệu từ Database đổ vào DataGridView
         private void LoadData()
         {
-            try 
+            try
             {
                 using (conn = new SqlConnection(connectionString))
                 {
@@ -84,13 +84,13 @@ namespace QuanLyKhoHang
                 txtGia.Clear();
                 // Nếu có lỗi xảy ra, nhảy ngay vào đây để bắt lấy
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                    // Hiện thông báo lỗi lịch sự thay vì làm văng app
-                    MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-
+                // Hiện thông báo lỗi lịch sự thay vì làm văng app
+                MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+        }
 
         private void dgvSanPham_CellClick(object sender, DataGridViewCellEventArgs e)
         {
