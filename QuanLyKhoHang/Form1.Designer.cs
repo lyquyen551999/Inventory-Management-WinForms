@@ -105,7 +105,7 @@
             dgvSanPham.Name = "dgvSanPham";
             dgvSanPham.Size = new Size(770, 138);
             dgvSanPham.TabIndex = 12;
-            dgvSanPham.CellContentClick += dgvSanPham_CellContentClick;
+            dgvSanPham.CellClick += dgvSanPham_CellClick;
             // 
             // txtTimKiem
             // 
@@ -115,6 +115,7 @@
             txtTimKiem.PlaceholderText = "Search";
             txtTimKiem.Size = new Size(187, 23);
             txtTimKiem.TabIndex = 11;
+            txtTimKiem.TextChanged += txtTimKiem_TextChanged;
             // 
             // panel2
             // 
@@ -140,7 +141,7 @@
             button2.TabIndex = 12;
             button2.Text = "Update";
             button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click_1;
+            button2.Click += button2_Click;
             // 
             // txtSoLuong
             // 
@@ -150,6 +151,7 @@
             txtSoLuong.PlaceholderText = "Quantity";
             txtSoLuong.Size = new Size(170, 23);
             txtSoLuong.TabIndex = 11;
+            txtSoLuong.KeyPress += txtSoLuong_KeyPress;
             // 
             // txtGia
             // 
@@ -159,6 +161,7 @@
             txtGia.PlaceholderText = "Price";
             txtGia.Size = new Size(170, 23);
             txtGia.TabIndex = 10;
+            txtGia.KeyPress += txtGia_KeyPress;
             // 
             // Form1
             // 
