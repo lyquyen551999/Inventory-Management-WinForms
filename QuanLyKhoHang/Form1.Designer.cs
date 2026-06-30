@@ -105,6 +105,7 @@
             dgvSanPham.Name = "dgvSanPham";
             dgvSanPham.Size = new Size(770, 138);
             dgvSanPham.TabIndex = 12;
+            dgvSanPham.CellContentClick += dgvSanPham_CellContentClick;
             // 
             // txtTimKiem
             // 
@@ -139,6 +140,7 @@
             button2.TabIndex = 12;
             button2.Text = "Update";
             button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click_1;
             // 
             // txtSoLuong
             // 

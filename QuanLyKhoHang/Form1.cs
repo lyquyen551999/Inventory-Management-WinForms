@@ -45,122 +45,6 @@ namespace QuanLyKhoHang
             LoadData();
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                // 1. Kiểm tra xem người dùng đã nhập đủ thông tin chưa
-                if (string.IsNullOrWhiteSpace(txtTen.Text) || string.IsNullOrWhiteSpace(txtSoLuong.Text) || string.IsNullOrWhiteSpace(txtGia.Text))
-                {
-                    MessageBox.Show("Vui lòng nhập đầy đủ thông tin sản phẩm!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return; // Dừng lại, không chạy code bên dưới nữa
-                }
-                // 2.Viết câu lệnh SQL INSERT
-                // Dùng @Name, @Quantity, @Price (gọi là Parameter) để chống lỗi cú pháp và bảo mật (SQL Injection)
-                string query = "INSERT INTO [Table] (Product_Name, Quantity, Price) VALUES (@Name, @Quantity, @Price)";
-                // 3. Kết nối và thực thi
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                {
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        // Ép kiểu dữ liệu từ chữ (Text) sang số (int/float) để khớp với Database
-                        cmd.Parameters.AddWithValue("@Name", txtTen.Text);
-                        cmd.Parameters.AddWithValue("@Quantity", int.Parse(txtSoLuong.Text));
-                        cmd.Parameters.AddWithValue("@Price", float.Parse(txtGia.Text));
-
-                        conn.Open();
-                        cmd.ExecuteNonQuery(); // Lệnh này dùng để chạy các câu query Thêm/Sửa/Xóa
-                    }
-                }
-                // 4. Thông báo thành công và dọn dẹp
-                MessageBox.Show("Đã thêm sản phẩm thành công!", "Thông báo");
-
-                // Tải lại lưới dữ liệu để thấy sản phẩm mới vừa thêm
-                LoadData();
-
-                // Xóa trắng các ô TextBox để sẵn sàng nhập món mới
-                txtTen.Clear();
-                txtSoLuong.Clear();
-                txtGia.Clear();
-                // Nếu có lỗi xảy ra, nhảy ngay vào đây để bắt lấy
-            }
-            catch (Exception ex)
-            {
-                // Hiện thông báo lỗi lịch sự thay vì làm văng app
-                MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
-        }
-
-        private void dgvSanPham_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            try
-            {
-                // Kiểm tra xem người dùng có click vào dòng dữ liệu hợp lệ không (tránh click vào thanh tiêu đề cột)
-                if (e.RowIndex >= 0)
-                {
-                    // Lấy dòng đang được chọn
-                    DataGridViewRow row = dgvSanPham.Rows[e.RowIndex];
-
-                    // Gán dữ liệu từ các cột tương ứng lên TextBox
-                    // Cột 0 là Id, Cột 1 là Product_Name, Cột 2 là Quantity, Cột 3 là Price
-                    selectedId = Convert.ToInt32(row.Cells[0].Value);
-                    txtTen.Text = row.Cells[1].Value.ToString();
-                    txtSoLuong.Text = row.Cells[2].Value.ToString();
-                    txtGia.Text = row.Cells[3].Value.ToString();
-                }
-            }
-            // Nếu có lỗi xảy ra, nhảy ngay vào đây để bắt lấy
-            catch (Exception ex)
-            {
-                // Hiện thông báo lỗi lịch sự thay vì làm văng app
-                MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                // Ràng buộc kiểm tra xem người dùng đã chọn sản phẩm để sửa chưa
-                if (selectedId == 0)
-                {
-                    MessageBox.Show("Vui lòng chọn một sản phẩm trong bảng để sửa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-                // Lệnh cập nhật dựa trên Id đã chọn
-                string query = "UPDATE [Table] SET Product_Name = @Name, Quantity = @Quantity, Price = @Price WHERE Id = @Id";
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                {
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@Name", txtTen.Text);
-                        cmd.Parameters.AddWithValue("@Quantity", int.Parse(txtSoLuong.Text));
-                        cmd.Parameters.AddWithValue("@Price", float.Parse(txtGia.Text));
-                        cmd.Parameters.AddWithValue("@Id", selectedId);
-
-                        conn.Open();
-                        cmd.ExecuteNonQuery();
-                    }
-                }
-                MessageBox.Show("Cập nhật thông tin thành công!", "Thông báo");
-                LoadData(); // Tải lại bảng để thấy thay đổi
-
-                // Reset mọi thứ sau khi sửa xong
-                selectedId = 0;
-                txtTen.Clear();
-                txtSoLuong.Clear();
-                txtGia.Clear();
-            }
-            // Nếu có lỗi xảy ra, nhảy ngay vào đây để bắt lấy
-            catch (Exception ex)
-            {
-                // Hiện thông báo lỗi lịch sự thay vì làm văng app
-                MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
         private void button4_Click(object sender, EventArgs e)
         {
             try
@@ -288,6 +172,120 @@ namespace QuanLyKhoHang
             if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
             {
                 e.Handled = true;
+            }
+        }
+
+        private void dgvSanPham_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                // Kiểm tra xem người dùng có click vào dòng dữ liệu hợp lệ không (tránh click vào thanh tiêu đề cột)
+                if (e.RowIndex >= 0)
+                {
+                    // Lấy dòng đang được chọn
+                    DataGridViewRow row = dgvSanPham.Rows[e.RowIndex];
+
+                    // Gán dữ liệu từ các cột tương ứng lên TextBox
+                    // Cột 0 là Id, Cột 1 là Product_Name, Cột 2 là Quantity, Cột 3 là Price
+                    selectedId = Convert.ToInt32(row.Cells[0].Value);
+                    txtTen.Text = row.Cells[1].Value.ToString();
+                    txtSoLuong.Text = row.Cells[2].Value.ToString();
+                    txtGia.Text = row.Cells[3].Value.ToString();
+                }
+            }
+            // Nếu có lỗi xảy ra, nhảy ngay vào đây để bắt lấy
+            catch (Exception ex)
+            {
+                // Hiện thông báo lỗi lịch sự thay vì làm văng app
+                MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // 1. Kiểm tra xem người dùng đã nhập đủ thông tin chưa
+                if (string.IsNullOrWhiteSpace(txtTen.Text) || string.IsNullOrWhiteSpace(txtSoLuong.Text) || string.IsNullOrWhiteSpace(txtGia.Text))
+                {
+                    MessageBox.Show("Vui lòng nhập đầy đủ thông tin sản phẩm!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return; // Dừng lại, không chạy code bên dưới nữa
+                }
+                // 2.Viết câu lệnh SQL INSERT
+                // Dùng @Name, @Quantity, @Price (gọi là Parameter) để chống lỗi cú pháp và bảo mật (SQL Injection)
+                string query = "INSERT INTO [Table] (Product_Name, Quantity, Price) VALUES (@Name, @Quantity, @Price)";
+                // 3. Kết nối và thực thi
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        // Ép kiểu dữ liệu từ chữ (Text) sang số (int/float) để khớp với Database
+                        cmd.Parameters.AddWithValue("@Name", txtTen.Text);
+                        cmd.Parameters.AddWithValue("@Quantity", int.Parse(txtSoLuong.Text));
+                        cmd.Parameters.AddWithValue("@Price", float.Parse(txtGia.Text));
+
+                        conn.Open();
+                        cmd.ExecuteNonQuery(); // Lệnh này dùng để chạy các câu query Thêm/Sửa/Xóa
+                    }
+                }
+                // 4. Thông báo thành công và dọn dẹp
+                MessageBox.Show("Đã thêm sản phẩm thành công!", "Thông báo");
+
+                // Tải lại lưới dữ liệu để thấy sản phẩm mới vừa thêm
+                LoadData();
+
+                // Xóa trắng các ô TextBox để sẵn sàng nhập món mới
+                txtTen.Clear();
+                txtSoLuong.Clear();
+                txtGia.Clear();
+                // Nếu có lỗi xảy ra, nhảy ngay vào đây để bắt lấy
+            }
+            catch (Exception ex)
+            {
+                // Hiện thông báo lỗi lịch sự thay vì làm văng app
+                MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            try
+            {
+                // Ràng buộc kiểm tra xem người dùng đã chọn sản phẩm để sửa chưa
+                if (selectedId == 0)
+                {
+                    MessageBox.Show("Vui lòng chọn một sản phẩm trong bảng để sửa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                // Lệnh cập nhật dựa trên Id đã chọn
+                string query = "UPDATE [Table] SET Product_Name = @Name, Quantity = @Quantity, Price = @Price WHERE Id = @Id";
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Name", txtTen.Text);
+                        cmd.Parameters.AddWithValue("@Quantity", int.Parse(txtSoLuong.Text));
+                        cmd.Parameters.AddWithValue("@Price", float.Parse(txtGia.Text));
+                        cmd.Parameters.AddWithValue("@Id", selectedId);
+
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                MessageBox.Show("Cập nhật thông tin thành công!", "Thông báo");
+                LoadData(); // Tải lại bảng để thấy thay đổi
+
+                // Reset mọi thứ sau khi sửa xong
+                selectedId = 0;
+                txtTen.Clear();
+                txtSoLuong.Clear();
+                txtGia.Clear();
+            }
+            // Nếu có lỗi xảy ra, nhảy ngay vào đây để bắt lấy
+            catch (Exception ex)
+            {
+                // Hiện thông báo lỗi lịch sự thay vì làm văng app
+                MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
