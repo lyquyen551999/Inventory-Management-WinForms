@@ -1,4 +1,4 @@
-namespace QuanLyKhoHang
+﻿namespace QuanLyKhoHang
 {
     internal static class Program
     {
@@ -8,10 +8,22 @@ namespace QuanLyKhoHang
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new Form1());
+
+            // 1. Khởi tạo màn hình đăng nhập
+            LoginForm loginForm = new LoginForm();
+
+            // 2. Mở nó lên dưới dạng hộp thoại (ShowDialog) và chờ người dùng thao tác
+            if (loginForm.ShowDialog() == DialogResult.OK)
+            {
+                // 3. Nếu LoginForm trả về kết quả OK (đăng nhập đúng), thì mới chạy Form1
+                Application.Run(new Form1());
+            }
+            else
+            {
+                // 4. Nếu người dùng nhấn dấu X tắt form đăng nhập, thoát toàn bộ ứng dụng
+                Application.Exit();
+            }
         }
     }
 }

@@ -183,6 +183,7 @@
             Name = "Form1";
             Text = "Product Management";
             Load += Form1_Load;
+            Shown += Form1_Shown;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvSanPham).EndInit();

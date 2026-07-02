@@ -42,6 +42,7 @@ namespace QuanLyKhoHang
         private void Form1_Load(object sender, EventArgs e)
         {
             dgvSanPham.AllowUserToAddRows = false;
+            this.ActiveControl = null;
             LoadData();
         }
         // Hàm dùng chung nhận vào 2 tham số: Nút đang được bấm và Hành động cần làm
@@ -333,6 +334,11 @@ namespace QuanLyKhoHang
             {
                 e.Handled = true;
             }
+        }
+
+        private void Form1_Shown(object sender, EventArgs e)
+        {
+            this.ActiveControl = null;
         }
     }
 }
