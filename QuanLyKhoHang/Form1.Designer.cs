@@ -39,6 +39,7 @@
             button2 = new Button();
             txtSoLuong = new TextBox();
             txtGia = new TextBox();
+            progressBar1 = new ProgressBar();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvSanPham).BeginInit();
             panel2.SuspendLayout();
@@ -163,11 +164,20 @@
             txtGia.TabIndex = 10;
             txtGia.KeyPress += txtGia_KeyPress;
             // 
+            // progressBar1
+            // 
+            progressBar1.Location = new Point(15, 241);
+            progressBar1.Name = "progressBar1";
+            progressBar1.Size = new Size(770, 14);
+            progressBar1.TabIndex = 13;
+            progressBar1.Visible = false;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(progressBar1);
             Controls.Add(panel2);
             Controls.Add(panel1);
             Name = "Form1";
@@ -193,5 +203,6 @@
         private TextBox txtSoLuong;
         private TextBox txtGia;
         private Button button2;
+        private ProgressBar progressBar1;
     }
 }

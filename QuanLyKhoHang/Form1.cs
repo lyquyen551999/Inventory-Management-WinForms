@@ -44,167 +44,213 @@ namespace QuanLyKhoHang
             dgvSanPham.AllowUserToAddRows = false;
             LoadData();
         }
-
-        private void button1_Click(object sender, EventArgs e)
+        // Hàm dùng chung nhận vào 2 tham số: Nút đang được bấm và Hành động cần làm
+        private async Task ExecuteWithLoadingAsync(Button btn, Action dbAction)
         {
             try
             {
-                // 1. Kiểm tra xem người dùng đã nhập đủ thông tin chưa
-                if (string.IsNullOrWhiteSpace(txtTen.Text) || string.IsNullOrWhiteSpace(txtSoLuong.Text) || string.IsNullOrWhiteSpace(txtGia.Text))
+                // 1. Trạng thái bắt đầu
+                progressBar1.Visible = true;
+                progressBar1.Value = 0;
+                if (btn != null) btn.Enabled = false;
+
+                // 2. Chạy hiệu ứng thanh loading giả lập
+                for (int i = 0; i <= 100; i += 10)
                 {
-                    MessageBox.Show("Vui lòng nhập đầy đủ thông tin sản phẩm!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return; // Dừng lại, không chạy code bên dưới nữa
+                    progressBar1.Value = i;
+                    await Task.Delay(30); // Tốc độ chạy (30ms)
                 }
-                // 2.Viết câu lệnh SQL INSERT
-                // Dùng @Name, @Quantity, @Price (gọi là Parameter) để chống lỗi cú pháp và bảo mật (SQL Injection)
-                string query = "INSERT INTO [Table] (Product_Name, Quantity, Price) VALUES (@Name, @Quantity, @Price)";
-                // 3. Kết nối và thực thi
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                {
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        // Ép kiểu dữ liệu từ chữ (Text) sang số (int/float) để khớp với Database
-                        cmd.Parameters.AddWithValue("@Name", txtTen.Text);
-                        cmd.Parameters.AddWithValue("@Quantity", int.Parse(txtSoLuong.Text));
-                        cmd.Parameters.AddWithValue("@Price", float.Parse(txtGia.Text));
 
-                        conn.Open();
-                        cmd.ExecuteNonQuery(); // Lệnh này dùng để chạy các câu query Thêm/Sửa/Xóa
-                    }
-                }
-                // 4. Thông báo thành công và dọn dẹp
-                MessageBox.Show("Đã thêm sản phẩm thành công!", "Thông báo");
-
-                // Tải lại lưới dữ liệu để thấy sản phẩm mới vừa thêm
-                LoadData();
-
-                // Xóa trắng các ô TextBox để sẵn sàng nhập món mới
-                txtTen.Clear();
-                txtSoLuong.Clear();
-                txtGia.Clear();
-                // Nếu có lỗi xảy ra, nhảy ngay vào đây để bắt lấy
+                // 3. Thực thi hành động thực tế được truyền vào (Load, Thêm, Sửa...)
+                dbAction.Invoke();
             }
             catch (Exception ex)
             {
-                // Hiện thông báo lỗi lịch sự thay vì làm văng app
-                MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Nếu có lỗi trong quá trình thêm/sửa/xóa, thông báo sẽ hiện ra
+                MessageBox.Show("Có lỗi xảy ra: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                // 4. Trạng thái kết thúc (Luôn luôn chạy dù có lỗi hay không)
+                progressBar1.Visible = false;
+                progressBar1.Value = 0;
+                if (btn != null) btn.Enabled = true;
             }
         }
-
-        private void button2_Click(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)
         {
-            try
+            await ExecuteWithLoadingAsync(sender as Button, () =>
             {
-                // Ràng buộc kiểm tra xem người dùng đã chọn sản phẩm để sửa chưa
-                if (selectedId == 0)
+                try
                 {
-                    MessageBox.Show("Vui lòng chọn một sản phẩm trong bảng để sửa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-                // Lệnh cập nhật dựa trên Id đã chọn
-                string query = "UPDATE [Table] SET Product_Name = @Name, Quantity = @Quantity, Price = @Price WHERE Id = @Id";
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                {
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    // 1. Kiểm tra xem người dùng đã nhập đủ thông tin chưa
+                    if (string.IsNullOrWhiteSpace(txtTen.Text) || string.IsNullOrWhiteSpace(txtSoLuong.Text) || string.IsNullOrWhiteSpace(txtGia.Text))
                     {
-                        cmd.Parameters.AddWithValue("@Name", txtTen.Text);
-                        cmd.Parameters.AddWithValue("@Quantity", int.Parse(txtSoLuong.Text));
-                        cmd.Parameters.AddWithValue("@Price", float.Parse(txtGia.Text));
-                        cmd.Parameters.AddWithValue("@Id", selectedId);
-
-                        conn.Open();
-                        cmd.ExecuteNonQuery();
+                        MessageBox.Show("Vui lòng nhập đầy đủ thông tin sản phẩm!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return; // Dừng lại, không chạy code bên dưới nữa
                     }
-                }
-                MessageBox.Show("Cập nhật thông tin thành công!", "Thông báo");
-                LoadData(); // Tải lại bảng để thấy thay đổi
-
-                // Reset mọi thứ sau khi sửa xong
-                selectedId = 0;
-                txtTen.Clear();
-                txtSoLuong.Clear();
-                txtGia.Clear();
-            }
-            // Nếu có lỗi xảy ra, nhảy ngay vào đây để bắt lấy
-            catch (Exception ex)
-            {
-                // Hiện thông báo lỗi lịch sự thay vì làm văng app
-                MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (selectedId == 0)
-                {
-                    MessageBox.Show("Vui lòng chọn một sản phẩm trong bảng để xóa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                // Hiện hộp thoại xác nhận trước khi xóa
-                DialogResult dialogResult = MessageBox.Show("Bạn có chắc chắn muốn xóa sản phẩm này không?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                if (dialogResult == DialogResult.Yes)
-                {
-                    string query = "DELETE FROM [Table] WHERE Id = @Id";
-
+                    // 2.Viết câu lệnh SQL INSERT
+                    // Dùng @Name, @Quantity, @Price (gọi là Parameter) để chống lỗi cú pháp và bảo mật (SQL Injection)
+                    string query = "INSERT INTO [Table] (Product_Name, Quantity, Price) VALUES (@Name, @Quantity, @Price)";
+                    // 3. Kết nối và thực thi
                     using (SqlConnection conn = new SqlConnection(connectionString))
                     {
                         using (SqlCommand cmd = new SqlCommand(query, conn))
                         {
+                            // Ép kiểu dữ liệu từ chữ (Text) sang số (int/float) để khớp với Database
+                            cmd.Parameters.AddWithValue("@Name", txtTen.Text);
+                            cmd.Parameters.AddWithValue("@Quantity", int.Parse(txtSoLuong.Text));
+                            cmd.Parameters.AddWithValue("@Price", float.Parse(txtGia.Text));
+
+                            conn.Open();
+                            cmd.ExecuteNonQuery(); // Lệnh này dùng để chạy các câu query Thêm/Sửa/Xóa
+                        }
+                    }
+                    // 4. Thông báo thành công và dọn dẹp
+                    MessageBox.Show("Đã thêm sản phẩm thành công!", "Thông báo");
+
+                    // Tải lại lưới dữ liệu để thấy sản phẩm mới vừa thêm
+                    LoadData();
+
+                    // Xóa trắng các ô TextBox để sẵn sàng nhập món mới
+                    txtTen.Clear();
+                    txtSoLuong.Clear();
+                    txtGia.Clear();
+                    // Nếu có lỗi xảy ra, nhảy ngay vào đây để bắt lấy
+                }
+                catch (Exception ex)
+                {
+                    // Hiện thông báo lỗi lịch sự thay vì làm văng app
+                    MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            });
+
+        }
+
+        private async void button2_Click(object sender, EventArgs e)
+        {
+            await ExecuteWithLoadingAsync(sender as Button, () =>
+            {
+                try
+                {
+                    // Ràng buộc kiểm tra xem người dùng đã chọn sản phẩm để sửa chưa
+                    if (selectedId == 0)
+                    {
+                        MessageBox.Show("Vui lòng chọn một sản phẩm trong bảng để sửa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                    // Lệnh cập nhật dựa trên Id đã chọn
+                    string query = "UPDATE [Table] SET Product_Name = @Name, Quantity = @Quantity, Price = @Price WHERE Id = @Id";
+                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    {
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@Name", txtTen.Text);
+                            cmd.Parameters.AddWithValue("@Quantity", int.Parse(txtSoLuong.Text));
+                            cmd.Parameters.AddWithValue("@Price", float.Parse(txtGia.Text));
                             cmd.Parameters.AddWithValue("@Id", selectedId);
 
                             conn.Open();
                             cmd.ExecuteNonQuery();
                         }
                     }
+                    MessageBox.Show("Cập nhật thông tin thành công!", "Thông báo");
+                    LoadData(); // Tải lại bảng để thấy thay đổi
 
-                    MessageBox.Show("Đã xóa sản phẩm khỏi kho!", "Thông báo");
-                    LoadData();
-
+                    // Reset mọi thứ sau khi sửa xong
                     selectedId = 0;
                     txtTen.Clear();
                     txtSoLuong.Clear();
                     txtGia.Clear();
                 }
-            }
-            // Nếu có lỗi xảy ra, nhảy ngay vào đây để bắt lấy
-            catch (Exception ex)
+                // Nếu có lỗi xảy ra, nhảy ngay vào đây để bắt lấy
+                catch (Exception ex)
+                {
+                    // Hiện thông báo lỗi lịch sự thay vì làm văng app
+                    MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            });
+
+        }
+
+        private async void button3_Click(object sender, EventArgs e)
+        {
+            if (selectedId == 0)
             {
-                // Hiện thông báo lỗi lịch sự thay vì làm văng app
-                MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Vui lòng chọn một sản phẩm trong bảng để xóa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            // Hiện hộp thoại xác nhận trước khi xóa
+            DialogResult dialogResult = MessageBox.Show("Bạn có chắc chắn muốn xóa sản phẩm này không?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (dialogResult == DialogResult.Yes)
+            {
+                await ExecuteWithLoadingAsync(sender as Button, () =>
+                {
+                    try
+                    {
+                        string query = "DELETE FROM [Table] WHERE Id = @Id";
+
+                        using (SqlConnection conn = new SqlConnection(connectionString))
+                        {
+                            using (SqlCommand cmd = new SqlCommand(query, conn))
+                            {
+                                cmd.Parameters.AddWithValue("@Id", selectedId);
+
+                                conn.Open();
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+
+                        MessageBox.Show("Đã xóa sản phẩm khỏi kho!", "Thông báo");
+                        LoadData();
+
+                        selectedId = 0;
+                        txtTen.Clear();
+                        txtSoLuong.Clear();
+                        txtGia.Clear();
+
+                    }
+                    // Nếu có lỗi xảy ra, nhảy ngay vào đây để bắt lấy
+                    catch (Exception ex)
+                    {
+                        // Hiện thông báo lỗi lịch sự thay vì làm văng app
+                        MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                });
             }
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private async void button4_Click(object sender, EventArgs e)
         {
-            try
+            await ExecuteWithLoadingAsync(sender as Button, () =>
             {
-                // 1. Xóa trắng các ô nhập liệu
-                txtTen.Clear();
-                txtSoLuong.Clear();
-                txtGia.Clear();
+                try
+                {
+                    // 1. Xóa trắng các ô nhập liệu
+                    txtTen.Clear();
+                    txtSoLuong.Clear();
+                    txtGia.Clear();
 
-                // 2. Xóa trắng ô tìm kiếm (nếu bạn có đặt tên ô tìm kiếm là txtTimKiem)
-                txtTimKiem.Clear();
+                    // 2. Xóa trắng ô tìm kiếm (nếu bạn có đặt tên ô tìm kiếm là txtTimKiem)
+                    txtTimKiem.Clear();
 
-                // 3. Đưa biến lưu ID về 0 (trạng thái chưa chọn gì cả)
-                selectedId = 0;
+                    // 3. Đưa biến lưu ID về 0 (trạng thái chưa chọn gì cả)
+                    selectedId = 0;
 
-                // 4. Tải lại toàn bộ dữ liệu nguyên bản lên bảng
-                LoadData();
+                    // 4. Tải lại toàn bộ dữ liệu nguyên bản lên bảng
+                    LoadData();
 
-                // 5. Đưa con trỏ chuột nhấp nháy về lại ô Tên sản phẩm để sẵn sàng gõ
-                txtTen.Focus();
-            }
-            // Nếu có lỗi xảy ra, nhảy ngay vào đây để bắt lấy
-            catch (Exception ex)
-            {
-                // Hiện thông báo lỗi lịch sự thay vì làm văng app
-                MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+                    // 5. Đưa con trỏ chuột nhấp nháy về lại ô Tên sản phẩm để sẵn sàng gõ
+                    txtTen.Focus();
+                }
+                // Nếu có lỗi xảy ra, nhảy ngay vào đây để bắt lấy
+                catch (Exception ex)
+                {
+                    // Hiện thông báo lỗi lịch sự thay vì làm văng app
+                    MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            });
         }
 
         private void txtTimKiem_TextChanged(object sender, EventArgs e)
