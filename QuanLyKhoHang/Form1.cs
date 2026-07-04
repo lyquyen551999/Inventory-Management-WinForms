@@ -428,6 +428,10 @@ namespace QuanLyKhoHang
         {
             // Cập nhật lại biến SavedLanguage để các hộp thoại MessageBox nghe theo ngôn ngữ mới
             LoginForm.SavedLanguage = cultureName;
+
+            // Ghi đè ngôn ngữ mới nhất vào file cấu hình mỗi khi người dùng đổi lựa chọn
+            File.WriteAllText("lang.txt", cultureName);
+
             // Đặt văn hóa (Culture) hiện tại của luồng chạy thành ngôn ngữ mới
             CultureInfo culture = new CultureInfo(cultureName);
             Thread.CurrentThread.CurrentCulture = culture;

@@ -66,8 +66,10 @@ namespace QuanLyKhoHang
         // 2. Hàm thực thi việc đổi chữ cho LoginForm
         private void ChangeLanguage(string cultureName)
         {
-            // Cập nhật lại biến SavedLanguage để các hộp thoại MessageBox nghe theo ngôn ngữ mới
-            LoginForm.SavedLanguage = cultureName;
+            SavedLanguage = cultureName;
+
+            // Ghi nhớ lựa chọn vào file để khi Restart không bị mất dữ liệu
+            File.WriteAllText("lang.txt", cultureName);
 
             CultureInfo culture = new CultureInfo(cultureName);
             Thread.CurrentThread.CurrentCulture = culture;
@@ -83,10 +85,27 @@ namespace QuanLyKhoHang
 
         private void LoginForm_Load(object sender, EventArgs e)
         {
-            // Kiểm tra đảm bảo ComboBox đã có danh sách lựa chọn để tránh lỗi văng app
+            // 1. Tự động kiểm tra và đọc lại ngôn ngữ đã lưu từ file (nếu có)
+            if (File.Exists("lang.txt"))
+            {
+                SavedLanguage = File.ReadAllText("lang.txt").Trim();
+            }
+
+            // 2. Chọn đúng ngôn ngữ trên ComboBox thay vì gán cứng Index = 0 như trước
             if (cbxlanguage.Items.Count > 0)
             {
-                cbxlanguage.SelectedIndex = 0;
+                if (SavedLanguage == "vi-VN")
+                {
+                    cbxlanguage.SelectedItem = "Tiếng Việt";
+                }
+                else if (SavedLanguage == "zh-Hant")
+                {
+                    cbxlanguage.SelectedItem = "中文";
+                }
+                else
+                {
+                    cbxlanguage.SelectedItem = "English";
+                }
             }
         }
 
