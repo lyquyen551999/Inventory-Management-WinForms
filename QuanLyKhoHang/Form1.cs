@@ -198,14 +198,52 @@ namespace QuanLyKhoHang
 
         private async void button3_Click(object sender, EventArgs e)
         {
+            // 1. Khai báo các biến chứa nội dung thông báo và tiêu đề
+            string canhBaoChuaChon = "";
+            string tieuDeCanhBao = "";
+            string xacNhanXoa = "";
+            string tieuDeXacNhan = "";
+            string xoaThanhCong = "";
+            string tieuDeThongBao = "";
+
+            // 2. Gán nội dung chữ theo ngôn ngữ hệ thống đang lưu
+            if (LoginForm.SavedLanguage == "vi-VN")
+            {
+                canhBaoChuaChon = "Vui lòng chọn một sản phẩm trong bảng để xóa!";
+                tieuDeCanhBao = "Thông báo";
+                xacNhanXoa = "Bạn có chắc chắn muốn xóa sản phẩm này không?";
+                tieuDeXacNhan = "Xác nhận xóa";
+                xoaThanhCong = "Đã xóa sản phẩm khỏi kho!";
+                tieuDeThongBao = "Thông báo";
+            }
+            else if (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW")
+            {
+                canhBaoChuaChon = "請在表格中選擇要刪除的產品！";
+                tieuDeCanhBao = "提示";
+                xacNhanXoa = "您確定要刪除此產品嗎？";
+                tieuDeXacNhan = "確認刪除";
+                xoaThanhCong = "產品 quấn 已從倉庫中刪除！";
+                tieuDeThongBao = "提示";
+            }
+            else // Mặc định là English
+            {
+                canhBaoChuaChon = "Please select a product from the table to delete!";
+                tieuDeCanhBao = "Warning";
+                xacNhanXoa = "Are you sure you want to delete this product?";
+                tieuDeXacNhan = "Confirm Delete";
+                xoaThanhCong = "Product deleted successfully from inventory!";
+                tieuDeThongBao = "Notification";
+            }
+
+            // 3. Kiểm tra điều kiện đầu vào
             if (selectedId == 0)
             {
-                MessageBox.Show("Vui lòng chọn một sản phẩm trong bảng để xóa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(canhBaoChuaChon, tieuDeCanhBao, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            // Hiện hộp thoại xác nhận trước khi xóa
-            DialogResult dialogResult = MessageBox.Show("Bạn có chắc chắn muốn xóa sản phẩm này không?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
+            // 4. Hiện hộp thoại xác nhận trước khi xóa
+            DialogResult dialogResult = MessageBox.Show(xacNhanXoa, tieuDeXacNhan, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (dialogResult == DialogResult.Yes)
             {
                 await ExecuteWithLoadingAsync(sender as Button, () =>
@@ -364,6 +402,8 @@ namespace QuanLyKhoHang
         }
         private void ChangeLanguage(string cultureName)
         {
+            // Cập nhật lại biến SavedLanguage để các hộp thoại MessageBox nghe theo ngôn ngữ mới
+            LoginForm.SavedLanguage = cultureName;
             // Đặt văn hóa (Culture) hiện tại của luồng chạy thành ngôn ngữ mới
             CultureInfo culture = new CultureInfo(cultureName);
             Thread.CurrentThread.CurrentCulture = culture;
@@ -409,6 +449,41 @@ namespace QuanLyKhoHang
             {
                 // Mặc định là English (hoặc ngôn ngữ gốc của hệ điều hành)
                 ChangeLanguage("en");
+            }
+        }
+
+        private void btn_logout_Click(object sender, EventArgs e)
+        {
+            // 1. Khai báo 2 biến để chứa nội dung thông báo
+            string thongBao = "";
+            string tieuDe = "";
+
+            // 2. Kiểm tra xem hệ thống đang chạy ngôn ngữ nào để gắn chữ tương ứng
+            if (LoginForm.SavedLanguage == "vi-VN")
+            {
+                thongBao = "Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?";
+                tieuDe = "Xác nhận đăng xuất";
+            }
+            else if (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW")
+            {
+                thongBao = "您確定要登出系統嗎？";
+                tieuDe = "確認登出";
+            }
+            else
+            {
+                thongBao = "Are you sure you want to log out of the system?";
+                tieuDe = "Confirm Logout";
+            }
+
+            // 3. Hiện hộp thoại xác nhận bằng chính ngôn ngữ đã được lọc ở trên
+            DialogResult result = MessageBox.Show(thongBao, tieuDe, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            // 4. Xử lý khi người dùng chọn Yes (Đồng ý)
+            if (result == DialogResult.Yes)
+            {
+                // Khởi động lại toàn bộ ứng dụng, dọn sạch bộ nhớ
+                Application.Restart();
+                Environment.Exit(0);
             }
         }
     }

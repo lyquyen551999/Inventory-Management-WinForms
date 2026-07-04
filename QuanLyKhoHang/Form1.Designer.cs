@@ -37,6 +37,7 @@
             dgvSanPham = new DataGridView();
             txtTimKiem = new TextBox();
             panel2 = new Panel();
+            btn_logout = new Button();
             cbxlanguage = new ComboBox();
             button2 = new Button();
             txtSoLuong = new TextBox();
@@ -49,8 +50,8 @@
             // 
             // button1
             // 
-            resources.ApplyResources(button1, "button1");
             button1.AllowDrop = true;
+            resources.ApplyResources(button1, "button1");
             button1.Name = "button1";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
@@ -97,6 +98,7 @@
             // panel2
             // 
             resources.ApplyResources(panel2, "panel2");
+            panel2.Controls.Add(btn_logout);
             panel2.Controls.Add(cbxlanguage);
             panel2.Controls.Add(button2);
             panel2.Controls.Add(txtSoLuong);
@@ -107,12 +109,19 @@
             panel2.Controls.Add(button3);
             panel2.Name = "panel2";
             // 
+            // btn_logout
+            // 
+            resources.ApplyResources(btn_logout, "btn_logout");
+            btn_logout.Name = "btn_logout";
+            btn_logout.UseVisualStyleBackColor = true;
+            btn_logout.Click += btn_logout_Click;
+            // 
             // cbxlanguage
             // 
-            resources.ApplyResources(cbxlanguage, "cbxlanguage");
             cbxlanguage.DropDownStyle = ComboBoxStyle.DropDownList;
             cbxlanguage.FormattingEnabled = true;
             cbxlanguage.Items.AddRange(new object[] { resources.GetString("cbxlanguage.Items"), resources.GetString("cbxlanguage.Items1"), resources.GetString("cbxlanguage.Items2") });
+            resources.ApplyResources(cbxlanguage, "cbxlanguage");
             cbxlanguage.Name = "cbxlanguage";
             cbxlanguage.SelectedIndexChanged += cbxlanguage_SelectedIndexChanged;
             // 
@@ -172,5 +181,6 @@
         private Button button2;
         private ProgressBar progressBar1;
         private ComboBox cbxlanguage;
+        private Button btn_logout;
     }
 }
