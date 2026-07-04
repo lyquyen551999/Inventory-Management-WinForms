@@ -7,6 +7,8 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms; // Đảm bảo có thư viện này cho Form
+using System;
+using System.Threading.Tasks;
 
 namespace QuanLyKhoHang
 {
@@ -19,7 +21,18 @@ namespace QuanLyKhoHang
         {
             InitializeComponent();
         }
-        // 2. Viết hàm lấy dữ liệu từ Database đổ vào DataGridView
+        // Hàm hỗ trợ hiện thông báo lỗi bằng 3 ngôn ngữ
+        private void ShowError(Exception ex)
+        {
+            string errorMsg = LoginForm.SavedLanguage == "vi-VN" ? "Lỗi hệ thống: " :
+                              (LoginForm.SavedLanguage == "zh-Hant" ? "系統錯誤: " : "System Error: ");
+
+            string errorTitle = LoginForm.SavedLanguage == "vi-VN" ? "Hệ thống báo lỗi" :
+                                (LoginForm.SavedLanguage == "zh-Hant" ? "系統提示" : "Error");
+
+            MessageBox.Show(errorMsg + ex.Message, errorTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        //Viết hàm lấy dữ liệu từ Database đổ vào DataGridView
         private void LoadData()
         {
             try
@@ -92,8 +105,8 @@ namespace QuanLyKhoHang
             }
             catch (Exception ex)
             {
-                // Nếu có lỗi trong quá trình thêm/sửa/xóa, thông báo sẽ hiện ra
-                MessageBox.Show("Có lỗi xảy ra: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Gọi hàm báo lỗi đa ngôn ngữ mà chúng ta đã làm ở bước trước
+                ShowError(ex);
             }
             finally
             {
@@ -156,8 +169,8 @@ namespace QuanLyKhoHang
                 }
                 catch (Exception ex)
                 {
-                    // Hiện thông báo lỗi lịch sự thay vì làm văng app
-                    MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // Gọi hàm báo lỗi đa ngôn ngữ mà chúng ta đã làm ở bước trước
+                    ShowError(ex);
                 }
             });
 
@@ -213,8 +226,8 @@ namespace QuanLyKhoHang
                 // Nếu có lỗi xảy ra, nhảy ngay vào đây để bắt lấy
                 catch (Exception ex)
                 {
-                    // Hiện thông báo lỗi lịch sự thay vì làm văng app
-                    MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // Gọi hàm báo lỗi đa ngôn ngữ mà chúng ta đã làm ở bước trước
+                    ShowError(ex);
                 }
             });
 
@@ -299,8 +312,8 @@ namespace QuanLyKhoHang
                     // Nếu có lỗi xảy ra, nhảy ngay vào đây để bắt lấy
                     catch (Exception ex)
                     {
-                        // Hiện thông báo lỗi lịch sự thay vì làm văng app
-                        MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        // Gọi hàm báo lỗi đa ngôn ngữ mà chúng ta đã làm ở bước trước
+                        ShowError(ex);
                     }
                 });
             }
@@ -332,8 +345,8 @@ namespace QuanLyKhoHang
                 // Nếu có lỗi xảy ra, nhảy ngay vào đây để bắt lấy
                 catch (Exception ex)
                 {
-                    // Hiện thông báo lỗi lịch sự thay vì làm văng app
-                    MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // Gọi hàm báo lỗi đa ngôn ngữ mà chúng ta đã làm ở bước trước
+                    ShowError(ex);
                 }
             });
         }
@@ -342,30 +355,54 @@ namespace QuanLyKhoHang
         {
             try
             {
-                // Cú pháp LIKE trong SQL dùng để tìm kiếm chuỗi ký tự gần đúng
-                string query = "SELECT * FROM [Table] WHERE Product_Name LIKE @Keyword";
+                // 1. Lấy nội dung tìm kiếm
+                string inputText = txtTimKiem.Text.Trim();
 
+                // Nếu người dùng xóa hết chữ trong ô tìm kiếm -> Tải lại toàn bộ dữ liệu ban đầu
+                if (string.IsNullOrEmpty(inputText))
+                {
+                    LoadData();
+                    return;
+                }
+
+                // 2. Tách chuỗi dựa vào dấu phẩy (,), tự động bỏ qua các khoảng trắng thừa
+                string[] keywords = inputText.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                // 3. Khởi tạo câu lệnh SQL gốc (Mẹo: 1=1 luôn đúng, dùng để dễ dàng cộng dồn chữ AND ở dưới)
+                string query = "SELECT * FROM [Table] WHERE 1=1 ";
+
+                // 4. Vòng lặp xây dựng câu lệnh SQL động cho từng từ khóa
+                for (int i = 0; i < keywords.Length; i++)
+                {
+                    // Yêu cầu: 1 từ khóa có thể nằm ở Tên, HOẶC Số lượng, HOẶC Giá.
+                    // Dùng CAST(...) để ép kiểu cột Số (int, float) sang Chữ (NVARCHAR) để xài được lệnh LIKE
+                    query += $" AND (Product_Name LIKE @kw{i} OR CAST(Quantity AS NVARCHAR(50)) LIKE @kw{i} OR CAST(Price AS NVARCHAR(50)) LIKE @kw{i})";
+                }
+
+                // 5. Kết nối DB và nhồi dữ liệu thực tế vào các tham số @kw
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
-                    // Dùng SqlDataAdapter để lấy dữ liệu thay vì SqlCommand + ExecuteNonQuery
                     using (SqlDataAdapter adapter = new SqlDataAdapter(query, conn))
                     {
-                        // Kẹp từ khóa vào giữa 2 dấu % để DB hiểu là tìm tên sản phẩm CÓ CHỨA từ khóa này
-                        adapter.SelectCommand.Parameters.AddWithValue("@Keyword", "%" + txtTimKiem.Text + "%");
+                        for (int i = 0; i < keywords.Length; i++)
+                        {
+                            // Thêm dấu % vào 2 đầu để tìm kiếm chứa đựng (Contains)
+                            string kw = "%" + keywords[i].Trim() + "%";
+                            adapter.SelectCommand.Parameters.AddWithValue($"@kw{i}", kw);
+                        }
 
                         DataTable dt = new DataTable();
                         adapter.Fill(dt);
 
-                        // Đổ lại danh sách kết quả tìm được lên bảng
+                        // Đổ danh sách kết quả lên bảng
                         dgvSanPham.DataSource = dt;
                     }
                 }
             }
-            // Nếu có lỗi xảy ra, nhảy ngay vào đây để bắt lấy
             catch (Exception ex)
             {
-                // Hiện thông báo lỗi lịch sự thay vì làm văng app
-                MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Gọi hàm báo lỗi đa ngôn ngữ mà chúng ta đã làm ở bước trước
+                ShowError(ex);
             }
         }
 
@@ -569,60 +606,63 @@ namespace QuanLyKhoHang
 
             if (sfd.ShowDialog() == DialogResult.OK)
             {
-                try
+                await ExecuteWithLoadingAsync(sender as Button, () =>
                 {
-                    // Tạo một file Excel mới tinh trong bộ nhớ
-                    using (XLWorkbook workbook = new XLWorkbook())
-                    {
-                        // Tạo một trang tính (Sheet) tên là "KhoHang"
-                        var worksheet = workbook.Worksheets.Add("KhoHang");
-
-                        // ĐƠN VỊ DOANH NGHIỆP: Quét và xuất tiêu đề cột theo đúng ngôn ngữ hiển thị trên UI
-                        for (int i = 0; i < dgvSanPham.Columns.Count; i++)
+                    try
                         {
-                            worksheet.Cell(1, i + 1).Value = dgvSanPham.Columns[i].HeaderText;
-
-                            // Trang trí dòng tiêu đề cho đẹp và chuyên nghiệp
-                            worksheet.Cell(1, i + 1).Style.Font.Bold = true; // In đậm
-                            worksheet.Cell(1, i + 1).Style.Fill.BackgroundColor = XLColor.LightGray; // Nền xám nhạt
-                            worksheet.Cell(1, i + 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center; // Căn giữa
-                        }
-
-                        // 3. Quét từng dòng, từng ô trên bảng để đổ dữ liệu vào Excel
-                        for (int r = 0; r < dgvSanPham.Rows.Count; r++)
-                        {
-                            for (int c = 0; c < dgvSanPham.Columns.Count; c++)
+                            // Tạo một file Excel mới tinh trong bộ nhớ
+                            using (XLWorkbook workbook = new XLWorkbook())
                             {
-                                var cellValue = dgvSanPham.Rows[r].Cells[c].Value;
+                                // Tạo một trang tính (Sheet) tên là "KhoHang"
+                                var worksheet = workbook.Worksheets.Add("KhoHang");
 
-                                // Đổ giá trị vào ô tương ứng (Dòng dữ liệu Excel bắt đầu từ dòng số 2)
-                                worksheet.Cell(r + 2, c + 1).Value = cellValue != null ? cellValue.ToString() : "";
-                            }
-                        }
+                                // ĐƠN VỊ DOANH NGHIỆP: Quét và xuất tiêu đề cột theo đúng ngôn ngữ hiển thị trên UI
+                                for (int i = 0; i < dgvSanPham.Columns.Count; i++)
+                                {
+                                    worksheet.Cell(1, i + 1).Value = dgvSanPham.Columns[i].HeaderText;
 
-                        // Lệnh tinh tế: Tự động co giãn độ rộng của các cột trong Excel cho vừa khít với chữ
-                        worksheet.Columns().AdjustToContents();
+                                    // Trang trí dòng tiêu đề cho đẹp và chuyên nghiệp
+                                    worksheet.Cell(1, i + 1).Style.Font.Bold = true; // In đậm
+                                    worksheet.Cell(1, i + 1).Style.Fill.BackgroundColor = XLColor.LightGray; // Nền xám nhạt
+                                    worksheet.Cell(1, i + 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center; // Căn giữa
+                                }
 
-                        await ExecuteWithLoadingAsync(sender as Button, () =>
-                        {
-                            // 4. Tiến hành lưu file thực tế xuống ổ đĩa
-                            workbook.SaveAs(sfd.FileName);
-                        });
+                                // 3. Quét từng dòng, từng ô trên bảng để đổ dữ liệu vào Excel
+                                for (int r = 0; r < dgvSanPham.Rows.Count; r++)
+                                {
+                                    for (int c = 0; c < dgvSanPham.Columns.Count; c++)
+                                    {
+                                        var cellValue = dgvSanPham.Rows[r].Cells[c].Value;
+
+                                        // Đổ giá trị vào ô tương ứng (Dòng dữ liệu Excel bắt đầu từ dòng số 2)
+                                        worksheet.Cell(r + 2, c + 1).Value = cellValue != null ? cellValue.ToString() : "";
+                                    }
+                                }
+
+                                // Lệnh tinh tế: Tự động co giãn độ rộng của các cột trong Excel cho vừa khít với chữ
+                                worksheet.Columns().AdjustToContents();
+
+                            
+                                // 4. Tiến hành lưu file thực tế xuống ổ đĩa
+                                workbook.SaveAs(sfd.FileName);
+                            
                         
+                            }
+
+                            // 5. Hiện thông báo thành công đa ngôn ngữ
+                            string successMsg = LoginForm.SavedLanguage == "vi-VN" ? "Xuất file Excel thành công!" :
+                                               (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW" ? "匯出 Excel 成功！" : "Exported to Excel successfully!");
+                            string successTitle = LoginForm.SavedLanguage == "vi-VN" ? "Hoàn tất" :
+                                                 (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW" ? "完成" : "Success");
+
+                            MessageBox.Show(successMsg, successTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        catch (Exception ex)
+                        {
+                            // Gọi hàm báo lỗi đa ngôn ngữ mà chúng ta đã làm ở bước trước
+                            ShowError(ex);
                     }
-
-                    // 5. Hiện thông báo thành công đa ngôn ngữ
-                    string successMsg = LoginForm.SavedLanguage == "vi-VN" ? "Xuất file Excel thành công!" :
-                                       (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW" ? "匯出 Excel 成功！" : "Exported to Excel successfully!");
-                    string successTitle = LoginForm.SavedLanguage == "vi-VN" ? "Hoàn tất" :
-                                         (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW" ? "完成" : "Success");
-
-                    MessageBox.Show(successMsg, successTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: " + ex.Message, "System Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                });
             }
         }
     }
