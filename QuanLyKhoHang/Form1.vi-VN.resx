@@ -132,6 +132,9 @@
   <data name="txtTimKiem.PlaceholderText" xml:space="preserve">
     <value>Tìm KIếm</value>
   </data>
+  <data name="btn_excel.Text" xml:space="preserve">
+    <value>Xuất Excel</value>
+  </data>
   <data name="btn_logout.Text" xml:space="preserve">
     <value>Đăng Xuất</value>
   </data>

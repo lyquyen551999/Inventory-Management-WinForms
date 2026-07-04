@@ -132,6 +132,9 @@
   <data name="txtTimKiem.PlaceholderText" xml:space="preserve">
     <value>查詢</value>
   </data>
+  <data name="btn_excel.Text" xml:space="preserve">
+    <value>匯出 Excel</value>
+  </data>
   <data name="btn_logout.Text" xml:space="preserve">
     <value>登出</value>
   </data>

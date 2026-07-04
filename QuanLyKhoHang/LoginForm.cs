@@ -66,7 +66,8 @@ namespace QuanLyKhoHang
         // 2. Hàm thực thi việc đổi chữ cho LoginForm
         private void ChangeLanguage(string cultureName)
         {
-            SavedLanguage = cultureName; // Lưu lại ngôn ngữ người dùng vừa chọn
+            // Cập nhật lại biến SavedLanguage để các hộp thoại MessageBox nghe theo ngôn ngữ mới
+            LoginForm.SavedLanguage = cultureName;
 
             CultureInfo culture = new CultureInfo(cultureName);
             Thread.CurrentThread.CurrentCulture = culture;

@@ -1,9 +1,12 @@
-﻿using System.Data.SqlClient;
-using System.Data;
-using System.Windows.Forms; // Đảm bảo có thư viện này cho Form
-using System.Threading;
-using System.Globalization;
+﻿using ClosedXML.Excel;
 using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Globalization;
+using System.IO;
+using System.Threading;
+using System.Windows.Forms; // Đảm bảo có thư viện này cho Form
 
 namespace QuanLyKhoHang
 {
@@ -514,6 +517,86 @@ namespace QuanLyKhoHang
                         e.CellStyle.BackColor = Color.LightYellow;    // Màu nền vàng nhạt
                         e.CellStyle.ForeColor = Color.DarkGoldenrod; // Màu chữ vàng đậm/nâu
                     }
+                }
+            }
+        }
+
+        private async void btn_excel_Click(object sender, EventArgs e)
+        {
+            // 1. Kiểm tra xem bảng có dữ liệu không, nếu trống thì thông báo theo đúng ngôn ngữ
+            if (dgvSanPham.Rows.Count == 0)
+            {
+                string msgTrong = LoginForm.SavedLanguage == "vi-VN" ? "Không có dữ liệu để xuất!" :
+                                  (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW" ? "沒有資料可匯出！" : "No data to export!");
+                string titleTrong = LoginForm.SavedLanguage == "vi-VN" ? "Thông báo" :
+                                    (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW" ? "提示" : "Warning");
+
+                MessageBox.Show(msgTrong, titleTrong, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 2. Cấu hình hộp thoại lưu file (SaveFileDialog)
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "Excel Workbook|*.xlsx";
+            sfd.FileName = "BaoCaoKhoHang.xlsx"; // Tên file mặc định khi lưu
+            sfd.Title = LoginForm.SavedLanguage == "vi-VN" ? "Lưu báo cáo kho hàng" :
+                        (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW" ? "儲存庫存報告" : "Save Inventory Report");
+
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    // Tạo một file Excel mới tinh trong bộ nhớ
+                    using (XLWorkbook workbook = new XLWorkbook())
+                    {
+                        // Tạo một trang tính (Sheet) tên là "KhoHang"
+                        var worksheet = workbook.Worksheets.Add("KhoHang");
+
+                        // ĐƠN VỊ DOANH NGHIỆP: Quét và xuất tiêu đề cột theo đúng ngôn ngữ hiển thị trên UI
+                        for (int i = 0; i < dgvSanPham.Columns.Count; i++)
+                        {
+                            worksheet.Cell(1, i + 1).Value = dgvSanPham.Columns[i].HeaderText;
+
+                            // Trang trí dòng tiêu đề cho đẹp và chuyên nghiệp
+                            worksheet.Cell(1, i + 1).Style.Font.Bold = true; // In đậm
+                            worksheet.Cell(1, i + 1).Style.Fill.BackgroundColor = XLColor.LightGray; // Nền xám nhạt
+                            worksheet.Cell(1, i + 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center; // Căn giữa
+                        }
+
+                        // 3. Quét từng dòng, từng ô trên bảng để đổ dữ liệu vào Excel
+                        for (int r = 0; r < dgvSanPham.Rows.Count; r++)
+                        {
+                            for (int c = 0; c < dgvSanPham.Columns.Count; c++)
+                            {
+                                var cellValue = dgvSanPham.Rows[r].Cells[c].Value;
+
+                                // Đổ giá trị vào ô tương ứng (Dòng dữ liệu Excel bắt đầu từ dòng số 2)
+                                worksheet.Cell(r + 2, c + 1).Value = cellValue != null ? cellValue.ToString() : "";
+                            }
+                        }
+
+                        // Lệnh tinh tế: Tự động co giãn độ rộng của các cột trong Excel cho vừa khít với chữ
+                        worksheet.Columns().AdjustToContents();
+
+                        await ExecuteWithLoadingAsync(sender as Button, () =>
+                        {
+                            // 4. Tiến hành lưu file thực tế xuống ổ đĩa
+                            workbook.SaveAs(sfd.FileName);
+                        });
+                        
+                    }
+
+                    // 5. Hiện thông báo thành công đa ngôn ngữ
+                    string successMsg = LoginForm.SavedLanguage == "vi-VN" ? "Xuất file Excel thành công!" :
+                                       (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW" ? "匯出 Excel 成功！" : "Exported to Excel successfully!");
+                    string successTitle = LoginForm.SavedLanguage == "vi-VN" ? "Hoàn tất" :
+                                         (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW" ? "完成" : "Success");
+
+                    MessageBox.Show(successMsg, successTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message, "System Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

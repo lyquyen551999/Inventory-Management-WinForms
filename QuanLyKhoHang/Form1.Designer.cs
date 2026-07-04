@@ -37,6 +37,7 @@
             dgvSanPham = new DataGridView();
             txtTimKiem = new TextBox();
             panel2 = new Panel();
+            btn_excel = new Button();
             btn_logout = new Button();
             cbxlanguage = new ComboBox();
             button2 = new Button();
@@ -99,6 +100,7 @@
             // panel2
             // 
             resources.ApplyResources(panel2, "panel2");
+            panel2.Controls.Add(btn_excel);
             panel2.Controls.Add(btn_logout);
             panel2.Controls.Add(cbxlanguage);
             panel2.Controls.Add(button2);
@@ -109,6 +111,13 @@
             panel2.Controls.Add(button4);
             panel2.Controls.Add(button3);
             panel2.Name = "panel2";
+            // 
+            // btn_excel
+            // 
+            resources.ApplyResources(btn_excel, "btn_excel");
+            btn_excel.Name = "btn_excel";
+            btn_excel.UseVisualStyleBackColor = true;
+            btn_excel.Click += btn_excel_Click;
             // 
             // btn_logout
             // 
@@ -183,5 +192,6 @@
         private ProgressBar progressBar1;
         private ComboBox cbxlanguage;
         private Button btn_logout;
+        private Button btn_excel;
     }
 }
