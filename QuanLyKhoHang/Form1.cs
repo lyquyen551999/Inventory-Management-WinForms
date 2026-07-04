@@ -60,6 +60,19 @@ namespace QuanLyKhoHang
             {
                 lblTongGiaTri.Text = "$ " + totalValue.ToString("N2");
             }
+            // --- DÁN ĐOẠN CODE ĐỊNH VỊ ĐỘNG NÀY VÀO CUỐI HÀM ---
+
+            // Khoảng cách cố định bạn muốn giữa nhãn tên và nhãn số (ví dụ: 6 pixel)
+            int gap = 6;
+
+            // Ép nhãn số mặt hàng bám theo rìa phải của nhãn tiêu đề mặt hàng
+            lblTongMatHang.Left = lb_product.Right + gap;
+
+            // Ép nhãn số lượng bám theo rìa phải của nhãn tiêu đề số lượng
+            lblTongSoLuong.Left = lb_quantity.Right + gap;
+
+            // Ép nhãn giá trị kho bám theo rìa phải của nhãn tiêu đề giá trị kho
+            lblTongGiaTri.Left = lb_value.Right + gap;
         }
         // Hàm hỗ trợ hiện thông báo lỗi bằng 3 ngôn ngữ
         private void ShowError(Exception ex)
@@ -709,6 +722,11 @@ namespace QuanLyKhoHang
                     }
                 });
             }
+        }
+
+        private void lblTongMatHang_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

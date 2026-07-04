@@ -38,6 +38,9 @@
             txtTimKiem = new TextBox();
             panel2 = new Panel();
             panel3 = new Panel();
+            lblTongGiaTri = new Label();
+            lblTongSoLuong = new Label();
+            lblTongMatHang = new Label();
             lb_value = new Label();
             lb_quantity = new Label();
             lb_product = new Label();
@@ -48,9 +51,6 @@
             txtSoLuong = new TextBox();
             txtGia = new TextBox();
             progressBar1 = new ProgressBar();
-            lblTongMatHang = new Label();
-            lblTongSoLuong = new Label();
-            lblTongGiaTri = new Label();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvSanPham).BeginInit();
             panel2.SuspendLayout();
@@ -132,6 +132,21 @@
             resources.ApplyResources(panel3, "panel3");
             panel3.Name = "panel3";
             // 
+            // lblTongGiaTri
+            // 
+            resources.ApplyResources(lblTongGiaTri, "lblTongGiaTri");
+            lblTongGiaTri.Name = "lblTongGiaTri";
+            // 
+            // lblTongSoLuong
+            // 
+            resources.ApplyResources(lblTongSoLuong, "lblTongSoLuong");
+            lblTongSoLuong.Name = "lblTongSoLuong";
+            // 
+            // lblTongMatHang
+            // 
+            resources.ApplyResources(lblTongMatHang, "lblTongMatHang");
+            lblTongMatHang.Name = "lblTongMatHang";
+            // 
             // lb_value
             // 
             resources.ApplyResources(lb_value, "lb_value");
@@ -194,21 +209,6 @@
             resources.ApplyResources(progressBar1, "progressBar1");
             progressBar1.Name = "progressBar1";
             // 
-            // lblTongMatHang
-            // 
-            resources.ApplyResources(lblTongMatHang, "lblTongMatHang");
-            lblTongMatHang.Name = "lblTongMatHang";
-            // 
-            // lblTongSoLuong
-            // 
-            resources.ApplyResources(lblTongSoLuong, "lblTongSoLuong");
-            lblTongSoLuong.Name = "lblTongSoLuong";
-            // 
-            // lblTongGiaTri
-            // 
-            resources.ApplyResources(lblTongGiaTri, "lblTongGiaTri");
-            lblTongGiaTri.Name = "lblTongGiaTri";
-            // 
             // Form1
             // 
             resources.ApplyResources(this, "$this");
@@ -246,11 +246,11 @@
         private Button btn_logout;
         private Button btn_excel;
         private Panel panel3;
-        private Label lb_product;
-        private Label lb_quantity;
+        private Label lblTongGiaTri;
         private Label lb_value;
         private Label lblTongSoLuong;
         private Label lblTongMatHang;
-        private Label lblTongGiaTri;
+        private Label lb_quantity;
+        private Label lb_product;
     }
 }
