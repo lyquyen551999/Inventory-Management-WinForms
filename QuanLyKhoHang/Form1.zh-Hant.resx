@@ -150,4 +150,13 @@
   <data name="$this.Text" xml:space="preserve">
     <value>產品管理</value>
   </data>
+  <data name="lb_product.Text" xml:space="preserve">
+    <value>總品項 :</value>
+  </data>
+  <data name="lb_quantity.Text" xml:space="preserve">
+    <value>總數量 :</value>
+  </data>
+  <data name="lb_value.Text" xml:space="preserve">
+    <value>總庫存價值 :</value>
+  </data>
 </root>

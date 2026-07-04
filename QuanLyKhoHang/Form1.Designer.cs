@@ -37,6 +37,10 @@
             dgvSanPham = new DataGridView();
             txtTimKiem = new TextBox();
             panel2 = new Panel();
+            panel3 = new Panel();
+            lb_value = new Label();
+            lb_quantity = new Label();
+            lb_product = new Label();
             btn_excel = new Button();
             btn_logout = new Button();
             cbxlanguage = new ComboBox();
@@ -44,9 +48,13 @@
             txtSoLuong = new TextBox();
             txtGia = new TextBox();
             progressBar1 = new ProgressBar();
+            lblTongMatHang = new Label();
+            lblTongSoLuong = new Label();
+            lblTongGiaTri = new Label();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvSanPham).BeginInit();
             panel2.SuspendLayout();
+            panel3.SuspendLayout();
             SuspendLayout();
             // 
             // button1
@@ -100,6 +108,7 @@
             // panel2
             // 
             resources.ApplyResources(panel2, "panel2");
+            panel2.Controls.Add(panel3);
             panel2.Controls.Add(btn_excel);
             panel2.Controls.Add(btn_logout);
             panel2.Controls.Add(cbxlanguage);
@@ -111,6 +120,32 @@
             panel2.Controls.Add(button4);
             panel2.Controls.Add(button3);
             panel2.Name = "panel2";
+            // 
+            // panel3
+            // 
+            panel3.Controls.Add(lblTongGiaTri);
+            panel3.Controls.Add(lblTongSoLuong);
+            panel3.Controls.Add(lblTongMatHang);
+            panel3.Controls.Add(lb_value);
+            panel3.Controls.Add(lb_quantity);
+            panel3.Controls.Add(lb_product);
+            resources.ApplyResources(panel3, "panel3");
+            panel3.Name = "panel3";
+            // 
+            // lb_value
+            // 
+            resources.ApplyResources(lb_value, "lb_value");
+            lb_value.Name = "lb_value";
+            // 
+            // lb_quantity
+            // 
+            resources.ApplyResources(lb_quantity, "lb_quantity");
+            lb_quantity.Name = "lb_quantity";
+            // 
+            // lb_product
+            // 
+            resources.ApplyResources(lb_product, "lb_product");
+            lb_product.Name = "lb_product";
             // 
             // btn_excel
             // 
@@ -159,6 +194,21 @@
             resources.ApplyResources(progressBar1, "progressBar1");
             progressBar1.Name = "progressBar1";
             // 
+            // lblTongMatHang
+            // 
+            resources.ApplyResources(lblTongMatHang, "lblTongMatHang");
+            lblTongMatHang.Name = "lblTongMatHang";
+            // 
+            // lblTongSoLuong
+            // 
+            resources.ApplyResources(lblTongSoLuong, "lblTongSoLuong");
+            lblTongSoLuong.Name = "lblTongSoLuong";
+            // 
+            // lblTongGiaTri
+            // 
+            resources.ApplyResources(lblTongGiaTri, "lblTongGiaTri");
+            lblTongGiaTri.Name = "lblTongGiaTri";
+            // 
             // Form1
             // 
             resources.ApplyResources(this, "$this");
@@ -174,6 +224,8 @@
             ((System.ComponentModel.ISupportInitialize)dgvSanPham).EndInit();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
+            panel3.ResumeLayout(false);
+            panel3.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -193,5 +245,12 @@
         private ComboBox cbxlanguage;
         private Button btn_logout;
         private Button btn_excel;
+        private Panel panel3;
+        private Label lb_product;
+        private Label lb_quantity;
+        private Label lb_value;
+        private Label lblTongSoLuong;
+        private Label lblTongMatHang;
+        private Label lblTongGiaTri;
     }
 }

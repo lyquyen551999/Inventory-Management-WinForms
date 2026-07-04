@@ -150,4 +150,13 @@
   <data name="$this.Text" xml:space="preserve">
     <value>Quản Lý Sản Phẩm</value>
   </data>
+  <data name="lb_product.Text" xml:space="preserve">
+    <value>Tổng mặt hàng :</value>
+  </data>
+  <data name="lb_quantity.Text" xml:space="preserve">
+    <value>Tổng số lượng :</value>
+  </data>
+  <data name="lb_value.Text" xml:space="preserve">
+    <value>Tổng giá trị kho :</value>
+  </data>
 </root>
