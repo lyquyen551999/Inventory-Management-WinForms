@@ -28,48 +28,50 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoginForm));
             txtb_id = new TextBox();
             txtb_password = new TextBox();
             btn_login = new Button();
+            cbxlanguage = new ComboBox();
             SuspendLayout();
             // 
             // txtb_id
             // 
-            txtb_id.Location = new Point(282, 217);
+            resources.ApplyResources(txtb_id, "txtb_id");
             txtb_id.Name = "txtb_id";
-            txtb_id.PlaceholderText = "User ID";
-            txtb_id.Size = new Size(235, 23);
-            txtb_id.TabIndex = 0;
             // 
             // txtb_password
             // 
-            txtb_password.Location = new Point(282, 256);
+            resources.ApplyResources(txtb_password, "txtb_password");
             txtb_password.Name = "txtb_password";
-            txtb_password.PlaceholderText = "Passwords";
-            txtb_password.Size = new Size(235, 23);
-            txtb_password.TabIndex = 1;
             txtb_password.UseSystemPasswordChar = true;
             // 
             // btn_login
             // 
-            btn_login.Location = new Point(360, 296);
+            resources.ApplyResources(btn_login, "btn_login");
             btn_login.Name = "btn_login";
-            btn_login.Size = new Size(75, 23);
-            btn_login.TabIndex = 2;
-            btn_login.Text = "Login";
             btn_login.UseVisualStyleBackColor = true;
             btn_login.Click += btn_login_Click;
             // 
+            // cbxlanguage
+            // 
+            cbxlanguage.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbxlanguage.FormattingEnabled = true;
+            cbxlanguage.Items.AddRange(new object[] { resources.GetString("cbxlanguage.Items"), resources.GetString("cbxlanguage.Items1"), resources.GetString("cbxlanguage.Items2") });
+            resources.ApplyResources(cbxlanguage, "cbxlanguage");
+            cbxlanguage.Name = "cbxlanguage";
+            cbxlanguage.SelectedIndexChanged += cbxlanguage_SelectedIndexChanged;
+            // 
             // LoginForm
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            resources.ApplyResources(this, "$this");
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            Controls.Add(cbxlanguage);
             Controls.Add(btn_login);
             Controls.Add(txtb_password);
             Controls.Add(txtb_id);
             Name = "LoginForm";
-            Text = "Login Window";
+            Load += LoginForm_Load;
             Shown += LoginForm_Shown;
             ResumeLayout(false);
             PerformLayout();
@@ -80,5 +82,6 @@
         private TextBox txtb_id;
         private TextBox txtb_password;
         private Button btn_login;
+        private ComboBox cbxlanguage;
     }
 }

@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading;
+using System.Globalization;
+using System.ComponentModel;
 
 namespace QuanLyKhoHang
 {
@@ -43,6 +46,66 @@ namespace QuanLyKhoHang
         private void LoginForm_Shown(object sender, EventArgs e)
         {
             this.ActiveControl = null;
+        }
+        // Hàm đệ quy để quét sạch mọi control, kể cả những control nằm sâu trong Panel
+        private void ApplyResourcesToControls(Control.ControlCollection controls, ComponentResourceManager resources)
+        {
+            foreach (Control control in controls)
+            {
+                resources.ApplyResources(control, control.Name);
+                // Nếu bên trong control này lại chứa control khác (như Panel chứa Button)
+                if (control.Controls.Count > 0)
+                {
+                    ApplyResourcesToControls(control.Controls, resources);
+                }
+            }
+        }
+        // 1. Biến tĩnh để lưu ngôn ngữ và truyền sang Form1
+        public static string SavedLanguage = "en";
+
+        // 2. Hàm thực thi việc đổi chữ cho LoginForm
+        private void ChangeLanguage(string cultureName)
+        {
+            SavedLanguage = cultureName; // Lưu lại ngôn ngữ người dùng vừa chọn
+
+            CultureInfo culture = new CultureInfo(cultureName);
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
+
+            ComponentResourceManager resources = new ComponentResourceManager(typeof(LoginForm));
+            // Áp dụng ngôn ngữ mới cho LoginForm
+            resources.ApplyResources(this, "$this");
+
+            // Quét các control con bên trong
+            ApplyResourcesToControls(this.Controls, resources);
+        }
+
+        private void LoginForm_Load(object sender, EventArgs e)
+        {
+            // Kiểm tra đảm bảo ComboBox đã có danh sách lựa chọn để tránh lỗi văng app
+            if (cbxlanguage.Items.Count > 0)
+            {
+                cbxlanguage.SelectedIndex = 0;
+            }
+        }
+
+        private void cbxlanguage_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string selectedLang = cbxlanguage.SelectedItem.ToString().Trim();
+
+            if (selectedLang == "Tiếng Việt")
+            {
+                ChangeLanguage("vi-VN");
+            }
+            else if (selectedLang == "中文")
+            {
+                ChangeLanguage("zh-Hant");
+            }
+            else
+            {
+                // Mặc định là English (hoặc ngôn ngữ gốc của hệ điều hành)
+                ChangeLanguage("en");
+            }
         }
     }
 }

@@ -1,6 +1,9 @@
 ﻿using System.Data.SqlClient;
 using System.Data;
 using System.Windows.Forms; // Đảm bảo có thư viện này cho Form
+using System.Threading;
+using System.Globalization;
+using System.ComponentModel;
 
 namespace QuanLyKhoHang
 {
@@ -43,6 +46,25 @@ namespace QuanLyKhoHang
         {
             dgvSanPham.AllowUserToAddRows = false;
             this.ActiveControl = null;
+            // Kiểm tra đảm bảo ComboBox đã có danh sách lựa chọn để tránh lỗi văng app
+            if (cbxlanguage.Items.Count > 0)
+            {
+                // Đọc biến SavedLanguage từ LoginForm truyền sang
+                string langToLoad = LoginForm.SavedLanguage;
+
+                if (langToLoad == "vi-VN")
+                {
+                    cbxlanguage.SelectedIndex = 0; // Vị trí của "Tiếng Việt"
+                }
+                else if (langToLoad == "zh-Hant")
+                {
+                    cbxlanguage.SelectedIndex = 2; // Vị trí của "中文" 
+                }
+                else
+                {
+                    cbxlanguage.SelectedIndex = 1; // Vị trí của "English"
+                }
+            }
             LoadData();
         }
         // Hàm dùng chung nhận vào 2 tham số: Nút đang được bấm và Hành động cần làm
@@ -339,6 +361,55 @@ namespace QuanLyKhoHang
         private void Form1_Shown(object sender, EventArgs e)
         {
             this.ActiveControl = null;
+        }
+        private void ChangeLanguage(string cultureName)
+        {
+            // Đặt văn hóa (Culture) hiện tại của luồng chạy thành ngôn ngữ mới
+            CultureInfo culture = new CultureInfo(cultureName);
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
+
+            // Gọi công cụ quản lý Resource
+            ComponentResourceManager resources = new ComponentResourceManager(typeof(Form1));
+
+            // Áp dụng chữ mới cho bản thân cái Form (như tiêu đề Form)
+            resources.ApplyResources(this, "$this");
+
+            // Quét và áp dụng chữ mới cho tất cả các control (nút bấm, nhãn dán, v.v.)
+            ApplyResourcesToControls(this.Controls, resources);
+        }
+
+        // Hàm đệ quy để quét sạch mọi control, kể cả những control nằm sâu trong Panel
+        private void ApplyResourcesToControls(Control.ControlCollection controls, ComponentResourceManager resources)
+        {
+            foreach (Control control in controls)
+            {
+                resources.ApplyResources(control, control.Name);
+                // Nếu bên trong control này lại chứa control khác (như Panel chứa Button)
+                if (control.Controls.Count > 0)
+                {
+                    ApplyResourcesToControls(control.Controls, resources);
+                }
+            }
+        }
+
+        private void cbxlanguage_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string selectedLang = cbxlanguage.SelectedItem.ToString().Trim();
+
+            if (selectedLang == "Tiếng Việt")
+            {
+                ChangeLanguage("vi-VN");
+            }
+            else if (selectedLang == "中文")
+            {
+                ChangeLanguage("zh-Hant");
+            }
+            else
+            {
+                // Mặc định là English (hoặc ngôn ngữ gốc của hệ điều hành)
+                ChangeLanguage("en");
+            }
         }
     }
 }

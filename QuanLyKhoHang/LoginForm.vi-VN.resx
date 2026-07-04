@@ -117,126 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="txtb_id.Location" type="System.Drawing.Point, System.Drawing">
-    <value>282, 217</value>
-  </data>
   <data name="txtb_id.PlaceholderText" xml:space="preserve">
-    <value>User ID</value>
-  </data>
-  <data name="txtb_id.Size" type="System.Drawing.Size, System.Drawing">
-    <value>235, 23</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="txtb_id.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;txtb_id.Name" xml:space="preserve">
-    <value>txtb_id</value>
-  </data>
-  <data name="&gt;&gt;txtb_id.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;txtb_id.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;txtb_id.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="txtb_password.Location" type="System.Drawing.Point, System.Drawing">
-    <value>282, 256</value>
+    <value>Tên Đăng Nhập</value>
   </data>
   <data name="txtb_password.PlaceholderText" xml:space="preserve">
-    <value>Passwords</value>
-  </data>
-  <data name="txtb_password.Size" type="System.Drawing.Size, System.Drawing">
-    <value>235, 23</value>
-  </data>
-  <data name="txtb_password.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;txtb_password.Name" xml:space="preserve">
-    <value>txtb_password</value>
-  </data>
-  <data name="&gt;&gt;txtb_password.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;txtb_password.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;txtb_password.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="btn_login.Location" type="System.Drawing.Point, System.Drawing">
-    <value>360, 296</value>
-  </data>
-  <data name="btn_login.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
-  </data>
-  <data name="btn_login.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
+    <value>Mật Khẩu</value>
   </data>
   <data name="btn_login.Text" xml:space="preserve">
-    <value>Login</value>
-  </data>
-  <data name="&gt;&gt;btn_login.Name" xml:space="preserve">
-    <value>btn_login</value>
-  </data>
-  <data name="&gt;&gt;btn_login.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;btn_login.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;btn_login.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="cbxlanguage.Items" xml:space="preserve">
-    <value>English</value>
-  </data>
-  <data name="cbxlanguage.Items1" xml:space="preserve">
-    <value>Tiếng Việt</value>
-  </data>
-  <data name="cbxlanguage.Items2" xml:space="preserve">
-    <value>中文</value>
-  </data>
-  <data name="cbxlanguage.Location" type="System.Drawing.Point, System.Drawing">
-    <value>667, 415</value>
-  </data>
-  <data name="cbxlanguage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 23</value>
-  </data>
-  <data name="cbxlanguage.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;cbxlanguage.Name" xml:space="preserve">
-    <value>cbxlanguage</value>
-  </data>
-  <data name="&gt;&gt;cbxlanguage.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;cbxlanguage.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;cbxlanguage.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>7, 15</value>
-  </data>
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>800, 450</value>
+    <value>Đăng Nhập</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>Login Window</value>
-  </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>LoginForm</value>
-  </data>
-  <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Form, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Màn Hình Đăng Nhập</value>
   </data>
 </root>
