@@ -88,6 +88,7 @@
             dgvSanPham.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvSanPham.Name = "dgvSanPham";
             dgvSanPham.CellClick += dgvSanPham_CellClick;
+            dgvSanPham.CellFormatting += dgvSanPham_CellFormatting;
             // 
             // txtTimKiem
             // 

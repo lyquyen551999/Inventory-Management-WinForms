@@ -486,5 +486,36 @@ namespace QuanLyKhoHang
                 Environment.Exit(0);
             }
         }
+
+        private void dgvSanPham_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            // 1. Xác định đúng cột Số lượng để xử lý (Giả sử cột Quantity của bạn nằm ở vị trí index = 2)
+            // Bạn có thể kiểm tra bằng tên cột: dgvSanPham.Columns[e.ColumnIndex].Name == "Quantity"
+            if (e.ColumnIndex == 2)
+            {
+                // Kiểm tra đảm bảo ô đó có dữ liệu thực tế
+                if (e.Value != null && e.Value != DBNull.Value)
+                {
+                    // Ép kiểu giá trị trong ô sang số nguyên để so sánh
+                    int quantity = Convert.ToInt32(e.Value);
+
+                    // THẾ GIỚI THỰC: Không dùng màu đỏ tươi chói mắt, hãy dùng màu dịu chuyên nghiệp (Soft Colors)
+
+                    // Trường hợp 1: Nguy cấp - Tồn kho từ 5 trở xuống (Báo động đỏ)
+                    if (quantity <= 5)
+                    {
+                        e.CellStyle.BackColor = Color.MistyRose;     // Màu nền hồng nhạt
+                        e.CellStyle.ForeColor = Color.Red;           // Màu chữ đỏ
+                        e.CellStyle.Font = new Font(dgvSanPham.Font, FontStyle.Bold); // In đậm con số
+                    }
+                    // Trường hợp 2: Cần chú ý - Tồn kho từ 6 đến 15 (Cảnh báo vàng)
+                    else if (quantity <= 15)
+                    {
+                        e.CellStyle.BackColor = Color.LightYellow;    // Màu nền vàng nhạt
+                        e.CellStyle.ForeColor = Color.DarkGoldenrod; // Màu chữ vàng đậm/nâu
+                    }
+                }
+            }
+        }
     }
 }
