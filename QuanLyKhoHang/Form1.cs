@@ -105,16 +105,21 @@ namespace QuanLyKhoHang
         }
         private async void button1_Click(object sender, EventArgs e)
         {
+            // 1. Kiểm tra thông tin trống (Đa ngôn ngữ)
+            if (string.IsNullOrWhiteSpace(txtTen.Text) || string.IsNullOrWhiteSpace(txtSoLuong.Text) || string.IsNullOrWhiteSpace(txtGia.Text))
+            {
+                string msgEmpty = LoginForm.SavedLanguage == "vi-VN" ? "Vui lòng nhập đầy đủ thông tin sản phẩm!" :
+                                  (LoginForm.SavedLanguage == "zh-Hant" ? "請輸入完整的產品資訊！" : "Please enter full product information!");
+                string titleMsg = LoginForm.SavedLanguage == "vi-VN" ? "Thông báo" :
+                                  (LoginForm.SavedLanguage == "zh-Hant" ? "提示" : "Notification");
+
+                MessageBox.Show(msgEmpty, titleMsg, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             await ExecuteWithLoadingAsync(sender as Button, () =>
             {
                 try
                 {
-                    // 1. Kiểm tra xem người dùng đã nhập đủ thông tin chưa
-                    if (string.IsNullOrWhiteSpace(txtTen.Text) || string.IsNullOrWhiteSpace(txtSoLuong.Text) || string.IsNullOrWhiteSpace(txtGia.Text))
-                    {
-                        MessageBox.Show("Vui lòng nhập đầy đủ thông tin sản phẩm!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return; // Dừng lại, không chạy code bên dưới nữa
-                    }
                     // 2.Viết câu lệnh SQL INSERT
                     // Dùng @Name, @Quantity, @Price (gọi là Parameter) để chống lỗi cú pháp và bảo mật (SQL Injection)
                     string query = "INSERT INTO [Table] (Product_Name, Quantity, Price) VALUES (@Name, @Quantity, @Price)";
@@ -132,8 +137,13 @@ namespace QuanLyKhoHang
                             cmd.ExecuteNonQuery(); // Lệnh này dùng để chạy các câu query Thêm/Sửa/Xóa
                         }
                     }
-                    // 4. Thông báo thành công và dọn dẹp
-                    MessageBox.Show("Đã thêm sản phẩm thành công!", "Thông báo");
+                    // 4. Thông báo thành công (Đa ngôn ngữ)
+                    string msgSuccess = LoginForm.SavedLanguage == "vi-VN" ? "Đã thêm sản phẩm thành công!" :
+                                        (LoginForm.SavedLanguage == "zh-Hant" ? "新增產品成功！" : "Product added successfully!");
+                    string titleSuccess = LoginForm.SavedLanguage == "vi-VN" ? "Thông báo" : 
+                                        (LoginForm.SavedLanguage == "zh-Hant" ? "提示" : "Notification");
+
+                    MessageBox.Show(msgSuccess, titleSuccess, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     // Tải lại lưới dữ liệu để thấy sản phẩm mới vừa thêm
                     LoadData();
@@ -155,16 +165,20 @@ namespace QuanLyKhoHang
 
         private async void button2_Click(object sender, EventArgs e)
         {
+            // 1. Kiểm tra ID (Đa ngôn ngữ)
+            if (selectedId == 0)
+            {
+                string msgSelect = LoginForm.SavedLanguage == "vi-VN" ? "Vui lòng chọn một sản phẩm trong bảng để sửa!" :
+                                   (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW" ? "請在表格中選擇要修改的產品！" : "Please select a product from the table to edit!");
+                string titleSelect = LoginForm.SavedLanguage == "vi-VN" ? "Thông báo" : (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW" ? "提示" : "Notification");
+
+                MessageBox.Show(msgSelect, titleSelect, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             await ExecuteWithLoadingAsync(sender as Button, () =>
             {
                 try
                 {
-                    // Ràng buộc kiểm tra xem người dùng đã chọn sản phẩm để sửa chưa
-                    if (selectedId == 0)
-                    {
-                        MessageBox.Show("Vui lòng chọn một sản phẩm trong bảng để sửa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
                     // Lệnh cập nhật dựa trên Id đã chọn
                     string query = "UPDATE [Table] SET Product_Name = @Name, Quantity = @Quantity, Price = @Price WHERE Id = @Id";
                     using (SqlConnection conn = new SqlConnection(connectionString))
@@ -180,7 +194,14 @@ namespace QuanLyKhoHang
                             cmd.ExecuteNonQuery();
                         }
                     }
-                    MessageBox.Show("Cập nhật thông tin thành công!", "Thông báo");
+                    // Thông báo cập nhật thành công (Đa ngôn ngữ)
+                    string msgSuccess = LoginForm.SavedLanguage == "vi-VN" ? "Cập nhật thông tin thành công!" :
+                                       (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW" ? "更新資訊成功！" : "Information updated successfully!");
+                    string titleSuccess = LoginForm.SavedLanguage == "vi-VN" ? "Thông báo" : 
+                                         (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW" ? "提示" : "Notification");
+
+                    MessageBox.Show(msgSuccess, titleSuccess, MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                     LoadData(); // Tải lại bảng để thấy thay đổi
 
                     // Reset mọi thứ sau khi sửa xong
