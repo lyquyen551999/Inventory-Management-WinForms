@@ -46,9 +46,9 @@ namespace QuanLyKhoHang
             // Hiển thị lên giao diện với định dạng số phân cách hàng ngàn (N0)
             lblTongMatHang.Text = totalProducts.ToString("N0");
             lblTongSoLuong.Text = totalQuantity.ToString("N0");
-
+            lblTongGiaTri.Text = totalValue.ToString("N0");
             // Xử lý hiển thị ký hiệu tiền tệ linh hoạt theo ngôn ngữ người dùng đang chọn
-            if (LoginForm.SavedLanguage == "vi-VN")
+            /*if (LoginForm.SavedLanguage == "vi-VN")
             {
                 lblTongGiaTri.Text = totalValue.ToString("N0") + " VNĐ";
             }
@@ -59,7 +59,7 @@ namespace QuanLyKhoHang
             else
             {
                 lblTongGiaTri.Text = "$ " + totalValue.ToString("N2");
-            }
+            }*/
             // --- DÁN ĐOẠN CODE ĐỊNH VỊ ĐỘNG NÀY VÀO CUỐI HÀM ---
 
             // Khoảng cách cố định bạn muốn giữa nhãn tên và nhãn số (ví dụ: 6 pixel)
