@@ -54,7 +54,7 @@ namespace QuanLyKhoHang
 
                 if (langToLoad == "vi-VN")
                 {
-                    cbxlanguage.SelectedIndex = 0; // Vị trí của "Tiếng Việt"
+                    cbxlanguage.SelectedIndex = 1; // Vị trí của "Tiếng Việt"
                 }
                 else if (langToLoad == "zh-Hant")
                 {
@@ -62,7 +62,7 @@ namespace QuanLyKhoHang
                 }
                 else
                 {
-                    cbxlanguage.SelectedIndex = 1; // Vị trí của "English"
+                    cbxlanguage.SelectedIndex = 0; // Vị trí của "English"
                 }
             }
             LoadData();
