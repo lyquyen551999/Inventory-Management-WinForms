@@ -723,10 +723,5 @@ namespace QuanLyKhoHang
                 });
             }
         }
-
-        private void lblTongMatHang_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }
