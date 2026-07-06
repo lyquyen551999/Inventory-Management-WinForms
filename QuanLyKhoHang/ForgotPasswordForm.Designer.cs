@@ -83,6 +83,7 @@
             Name = "ForgotPasswordForm";
             Load += ForgotPasswordForm_Load;
             Shown += ForgotPasswordForm_Shown;
+            Resize += ForgotPasswordForm_Resize;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);

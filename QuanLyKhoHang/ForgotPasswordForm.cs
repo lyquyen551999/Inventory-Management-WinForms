@@ -132,5 +132,12 @@ namespace QuanLyKhoHang
             AdjustSpacing();
         }
 
+        private void ForgotPasswordForm_Resize(object sender, EventArgs e)
+        {
+            if (panel1 != null)
+            {
+                AdjustSpacing();
+            }
+        }
     }
 }

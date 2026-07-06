@@ -207,5 +207,13 @@ namespace QuanLyKhoHang
         {
             new RegisterForm().ShowDialog();
         }
+
+        private void LoginForm_Resize(object sender, EventArgs e)
+        {
+            if (panel1 != null)
+            {
+                AdjustSpacing();
+            }
+        }
     }
 }

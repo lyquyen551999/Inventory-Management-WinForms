@@ -50,12 +50,12 @@
             // 
             // panel1
             // 
-            resources.ApplyResources(panel1, "panel1");
             panel1.Controls.Add(lilbl_signup);
             panel1.Controls.Add(lilbl_forgetpasswords);
             panel1.Controls.Add(btn_login);
             panel1.Controls.Add(txtb_password);
             panel1.Controls.Add(txtb_id);
+            resources.ApplyResources(panel1, "panel1");
             panel1.Name = "panel1";
             // 
             // lilbl_signup
@@ -99,6 +99,7 @@
             Name = "LoginForm";
             Load += LoginForm_Load;
             Shown += LoginForm_Shown;
+            Resize += LoginForm_Resize;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);

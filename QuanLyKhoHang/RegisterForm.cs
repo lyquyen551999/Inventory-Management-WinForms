@@ -58,7 +58,7 @@ namespace QuanLyKhoHang
                     insCmd.Parameters.AddWithValue("@cname", "New User");
                     insCmd.Parameters.AddWithValue("@uid", txtRegUser.Text.Trim());
                     insCmd.Parameters.AddWithValue("@pwd", txtRegPass.Text.Trim());
-                    insCmd.Parameters.AddWithValue("@mail",txtRegEmail.Text.Trim());
+                    insCmd.Parameters.AddWithValue("@mail", txtRegEmail.Text.Trim());
                     insCmd.ExecuteNonQuery();
 
                     string success = LoginForm.SavedLanguage == "vi-VN" ? "Đăng ký thành công!" :
@@ -135,6 +135,14 @@ namespace QuanLyKhoHang
         {
             this.ActiveControl = null;
             AdjustSpacing();
+        }
+
+        private void RegisterForm_Resize(object sender, EventArgs e)
+        {
+            if (panel1 != null)
+            {
+                AdjustSpacing();
+            }
         }
     }
 }

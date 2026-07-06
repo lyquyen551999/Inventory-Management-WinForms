@@ -97,6 +97,7 @@
             Name = "RegisterForm";
             Load += RegisterForm_Load;
             Shown += RegisterForm_Shown;
+            Resize += RegisterForm_Resize;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);
