@@ -117,126 +117,211 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="txtb_id.Location" type="System.Drawing.Point, System.Drawing">
-    <value>282, 217</value>
-  </data>
-  <data name="txtb_id.PlaceholderText" xml:space="preserve">
-    <value>User ID</value>
-  </data>
-  <data name="txtb_id.Size" type="System.Drawing.Size, System.Drawing">
-    <value>235, 23</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="txtb_id.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;txtb_id.Name" xml:space="preserve">
-    <value>txtb_id</value>
-  </data>
-  <data name="&gt;&gt;txtb_id.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;txtb_id.Parent" xml:space="preserve">
+  <data name="&gt;&gt;cbxlanguage.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;txtb_id.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="txtb_password.Location" type="System.Drawing.Point, System.Drawing">
-    <value>282, 256</value>
-  </data>
-  <data name="txtb_password.PlaceholderText" xml:space="preserve">
-    <value>Passwords</value>
-  </data>
-  <data name="txtb_password.Size" type="System.Drawing.Size, System.Drawing">
-    <value>235, 23</value>
-  </data>
-  <data name="txtb_password.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;txtb_password.Name" xml:space="preserve">
-    <value>txtb_password</value>
+  <data name="&gt;&gt;lilbl_signup.Parent" xml:space="preserve">
+    <value>panel1</value>
   </data>
   <data name="&gt;&gt;txtb_password.Type" xml:space="preserve">
     <value>System.Windows.Forms.TextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;txtb_password.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="&gt;&gt;txtb_password.Name" xml:space="preserve">
+    <value>txtb_password</value>
   </data>
-  <data name="&gt;&gt;txtb_password.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="btn_login.Location" type="System.Drawing.Point, System.Drawing">
-    <value>360, 296</value>
-  </data>
-  <data name="btn_login.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
-  </data>
-  <data name="btn_login.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="btn_login.Text" xml:space="preserve">
-    <value>Login</value>
-  </data>
-  <data name="&gt;&gt;btn_login.Name" xml:space="preserve">
-    <value>btn_login</value>
-  </data>
-  <data name="&gt;&gt;btn_login.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;btn_login.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;btn_login.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="cbxlanguage.Items" xml:space="preserve">
-    <value>English</value>
-  </data>
-  <data name="cbxlanguage.Items1" xml:space="preserve">
-    <value>Tiếng Việt</value>
-  </data>
-  <data name="cbxlanguage.Items2" xml:space="preserve">
-    <value>中文</value>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>800, 450</value>
   </data>
   <data name="cbxlanguage.Location" type="System.Drawing.Point, System.Drawing">
     <value>667, 415</value>
   </data>
-  <data name="cbxlanguage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 23</value>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="btn_login.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="&gt;&gt;panel1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="btn_login.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lilbl_signup.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="btn_login.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="txtb_id.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="lilbl_forgetpasswords.Location" type="System.Drawing.Point, System.Drawing">
+    <value>149, 165</value>
+  </data>
+  <data name="&gt;&gt;btn_login.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="cbxlanguage.Items1" xml:space="preserve">
+    <value>Tiếng Việt</value>
+  </data>
+  <data name="panel1.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;txtb_password.Parent" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="panel1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>214, 117</value>
+  </data>
+  <data name="&gt;&gt;lilbl_forgetpasswords.Parent" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="txtb_id.PlaceholderText" xml:space="preserve">
+    <value>User ID</value>
+  </data>
+  <data name="lilbl_forgetpasswords.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 15</value>
+  </data>
+  <data name="&gt;&gt;txtb_id.Name" xml:space="preserve">
+    <value>txtb_id</value>
+  </data>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>7, 15</value>
+  </data>
+  <data name="&gt;&gt;lilbl_forgetpasswords.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="lilbl_signup.Text" xml:space="preserve">
+    <value>Sign up</value>
+  </data>
+  <data name="lilbl_signup.Location" type="System.Drawing.Point, System.Drawing">
+    <value>174, 190</value>
+  </data>
+  <data name="&gt;&gt;panel1.Name" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="panel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>403, 238</value>
+  </data>
+  <data name="lilbl_signup.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 15</value>
   </data>
   <data name="cbxlanguage.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
   </data>
-  <data name="&gt;&gt;cbxlanguage.Name" xml:space="preserve">
-    <value>cbxlanguage</value>
+  <data name="&gt;&gt;txtb_password.ZOrder" xml:space="preserve">
+    <value>3</value>
   </data>
-  <data name="&gt;&gt;cbxlanguage.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;cbxlanguage.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;cbxlanguage.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>7, 15</value>
-  </data>
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>800, 450</value>
-  </data>
-  <data name="$this.Text" xml:space="preserve">
-    <value>Login Window</value>
-  </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>LoginForm</value>
+  <data name="cbxlanguage.Size" type="System.Drawing.Size, System.Drawing">
+    <value>121, 23</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.Form, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;cbxlanguage.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="cbxlanguage.Items" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="cbxlanguage.Items2" xml:space="preserve">
+    <value>中文</value>
+  </data>
+  <data name="lilbl_forgetpasswords.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="&gt;&gt;cbxlanguage.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;lilbl_signup.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="txtb_id.Location" type="System.Drawing.Point, System.Drawing">
+    <value>83, 50</value>
+  </data>
+  <data name="&gt;&gt;panel1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="lilbl_signup.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="lilbl_signup.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="&gt;&gt;lilbl_forgetpasswords.Name" xml:space="preserve">
+    <value>lilbl_forgetpasswords</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>LoginForm</value>
+  </data>
+  <data name="txtb_password.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;panel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cbxlanguage.Name" xml:space="preserve">
+    <value>cbxlanguage</value>
+  </data>
+  <data name="lilbl_forgetpasswords.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="&gt;&gt;btn_login.Name" xml:space="preserve">
+    <value>btn_login</value>
+  </data>
+  <data name="&gt;&gt;btn_login.Parent" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="btn_login.Location" type="System.Drawing.Point, System.Drawing">
+    <value>161, 129</value>
+  </data>
+  <data name="&gt;&gt;lilbl_signup.Name" xml:space="preserve">
+    <value>lilbl_signup</value>
+  </data>
+  <data name="&gt;&gt;txtb_id.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btn_login.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="lilbl_forgetpasswords.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="&gt;&gt;lilbl_forgetpasswords.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;lilbl_signup.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="lilbl_forgetpasswords.Text" xml:space="preserve">
+    <value>Forgot Passwords</value>
+  </data>
+  <data name="&gt;&gt;txtb_id.Parent" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="txtb_password.Size" type="System.Drawing.Size, System.Drawing">
+    <value>235, 23</value>
+  </data>
+  <data name="txtb_id.Size" type="System.Drawing.Size, System.Drawing">
+    <value>235, 23</value>
+  </data>
+  <data name="txtb_password.PlaceholderText" xml:space="preserve">
+    <value>Passwords</value>
+  </data>
+  <data name="txtb_password.Location" type="System.Drawing.Point, System.Drawing">
+    <value>83, 89</value>
+  </data>
+  <data name="&gt;&gt;txtb_id.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="btn_login.Text" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Login Window</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
 </root>

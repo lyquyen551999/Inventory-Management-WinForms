@@ -1,7 +1,7 @@
 ﻿using ClosedXML.Excel;
 using System.ComponentModel;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -14,12 +14,19 @@ namespace QuanLyKhoHang
 {
     public partial class Form1 : Form
     {
-        string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=D:\Users\lyquy\source\repos\QuanLyKhoHang\QuanLyKhoHang\KhoHangDB.mdf;Integrated Security=True";
-        int selectedId = 0; // Biến này để nhớ xem bạn đang thao tác trên sản phẩm nào
+        string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\lyquy\Source\Repos\Inventory-Management-WinForms\QuanLyKhoHang\sales.mdf;Integrated Security=True";
+        string selectedSalesId = ""; // Biến này để nhớ xem bạn đang thao tác trên sản phẩm nào
         SqlConnection conn;
         public Form1()
         {
             InitializeComponent();
+        }
+
+        // Hàm tự động sinh mã ngẫu nhiên 10 ký tự (Dùng cho khóa chính)
+        private string GenerateRandomId(string prefix)
+        {
+            string id = prefix + Guid.NewGuid().ToString("N").Substring(0, 8);
+            return id.Length > 10 ? id.Substring(0, 10) : id;
         }
 
         private void UpdateStatistics()
@@ -48,7 +55,7 @@ namespace QuanLyKhoHang
             lblTongSoLuong.Text = totalQuantity.ToString("N0");
             lblTongGiaTri.Text = totalValue.ToString("N0");
             // Xử lý hiển thị ký hiệu tiền tệ linh hoạt theo ngôn ngữ người dùng đang chọn
-            /*if (LoginForm.SavedLanguage == "vi-VN")
+            if (LoginForm.SavedLanguage == "vi-VN")
             {
                 lblTongGiaTri.Text = totalValue.ToString("N0") + " VNĐ";
             }
@@ -59,7 +66,7 @@ namespace QuanLyKhoHang
             else
             {
                 lblTongGiaTri.Text = "$ " + totalValue.ToString("N2");
-            }*/
+            }
             // --- DÁN ĐOẠN CODE ĐỊNH VỊ ĐỘNG NÀY VÀO CUỐI HÀM ---
 
             // Khoảng cách cố định bạn muốn giữa nhãn tên và nhãn số (ví dụ: 6 pixel)
@@ -93,23 +100,29 @@ namespace QuanLyKhoHang
                 using (conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-                    // Đổi "Table" thành tên bảng thực tế bạn đã tạo (ví dụ: SanPham)
-                    string query = "SELECT * FROM [Table]";
+
+                    // 1. Xác định cột giá dựa trên ngôn ngữ đang chọn
+                    string priceCol = "vn_price";
+                    if (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW")
+                        priceCol = "tw_price";
+                    else if (LoginForm.SavedLanguage == "en")
+                        priceCol = "us_price";
+
+                    // 2. Chốt cứng thứ tự cột: 0=ID, 1=Tên, 2=Số lượng, 3=Giá
+                    // Điều này cứu app khỏi việc bị văng khi chạy vòng lặp
+                    string query = $"SELECT sales_id, product_name, quantity, {priceCol} AS Price FROM sales";
+
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
 
-                    // dgvSanPham là tên của DataGridView bạn đã kéo vào Form
                     dgvSanPham.DataSource = dt;
-
                     UpdateStatistics();
                 }
             }
-            // Nếu có lỗi xảy ra, nhảy ngay vào đây để bắt lấy
             catch (Exception ex)
             {
-                // Hiện thông báo lỗi lịch sự thay vì làm văng app
-                MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowError(ex);
             }
         }
         // 3. Gọi hàm LoadData khi Form vừa mở lên
@@ -188,21 +201,35 @@ namespace QuanLyKhoHang
             {
                 try
                 {
-                    // 2.Viết câu lệnh SQL INSERT
-                    // Dùng @Name, @Quantity, @Price (gọi là Parameter) để chống lỗi cú pháp và bảo mật (SQL Injection)
-                    string query = "INSERT INTO [Table] (Product_Name, Quantity, Price) VALUES (@Name, @Quantity, @Price)";
-                    // 3. Kết nối và thực thi
+                    string query = "INSERT INTO sales (sales_id, product_id, product_name, quantity, us_price, vn_price, tw_price, customer_id, created_at) " +
+                                    "VALUES (@sId, @pId, @pName, @Qty, @us, @vn, @tw, @cId, @created)";
+
                     using (SqlConnection conn = new SqlConnection(connectionString))
                     {
                         using (SqlCommand cmd = new SqlCommand(query, conn))
                         {
-                            // Ép kiểu dữ liệu từ chữ (Text) sang số (int/float) để khớp với Database
-                            cmd.Parameters.AddWithValue("@Name", txtTen.Text);
-                            cmd.Parameters.AddWithValue("@Quantity", int.Parse(txtSoLuong.Text));
-                            cmd.Parameters.AddWithValue("@Price", float.Parse(txtGia.Text));
+                            double giaNhapVao = double.Parse(txtGia.Text);
+                            double giaVN = 0, giaUS = 0, giaTW = 0;
+
+                            // Tự động chia tỷ giá dựa vào ngôn ngữ hiện tại
+                            if (LoginForm.SavedLanguage == "vi-VN") { giaVN = giaNhapVao; giaUS = giaNhapVao / 25000; giaTW = giaNhapVao / 800; }
+                            else if (LoginForm.SavedLanguage == "zh-Hant") { giaTW = giaNhapVao; giaVN = giaNhapVao * 800; giaUS = (giaNhapVao * 800) / 25000; }
+                            else { giaUS = giaNhapVao; giaVN = giaNhapVao * 25000; giaTW = (giaNhapVao * 25000) / 800; }
+
+                            cmd.Parameters.AddWithValue("@sId", GenerateRandomId("S"));
+                            cmd.Parameters.AddWithValue("@pId", GenerateRandomId("P"));
+                            cmd.Parameters.AddWithValue("@pName", txtTen.Text);
+                            cmd.Parameters.AddWithValue("@Qty", int.Parse(txtSoLuong.Text));
+                            cmd.Parameters.AddWithValue("@us", giaUS);
+                            cmd.Parameters.AddWithValue("@vn", giaVN);
+                            cmd.Parameters.AddWithValue("@tw", giaTW);
+
+                            // Tạm gán mã khách hàng tĩnh (Vì bạn đang quản lý kho chung)
+                            cmd.Parameters.AddWithValue("@cId", "CUST_001");
+                            cmd.Parameters.AddWithValue("@created", DateTime.Now);
 
                             conn.Open();
-                            cmd.ExecuteNonQuery(); // Lệnh này dùng để chạy các câu query Thêm/Sửa/Xóa
+                            cmd.ExecuteNonQuery();
                         }
                     }
                     // 4. Thông báo thành công (Đa ngôn ngữ)
@@ -234,7 +261,7 @@ namespace QuanLyKhoHang
         private async void button2_Click(object sender, EventArgs e)
         {
             // 1. Kiểm tra ID (Đa ngôn ngữ)
-            if (selectedId == 0)
+            if (string.IsNullOrEmpty(selectedSalesId))
             {
                 string msgSelect = LoginForm.SavedLanguage == "vi-VN" ? "Vui lòng chọn một sản phẩm trong bảng để sửa!" :
                                    (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW" ? "請在表格中選擇要修改的產品！" : "Please select a product from the table to edit!");
@@ -247,16 +274,24 @@ namespace QuanLyKhoHang
             {
                 try
                 {
-                    // Lệnh cập nhật dựa trên Id đã chọn
-                    string query = "UPDATE [Table] SET Product_Name = @Name, Quantity = @Quantity, Price = @Price WHERE Id = @Id";
+                    string query = "UPDATE sales SET product_name = @pName, quantity = @Qty, us_price = @us, vn_price = @vn, tw_price = @tw WHERE sales_id = @sId";
                     using (SqlConnection conn = new SqlConnection(connectionString))
                     {
                         using (SqlCommand cmd = new SqlCommand(query, conn))
                         {
-                            cmd.Parameters.AddWithValue("@Name", txtTen.Text);
-                            cmd.Parameters.AddWithValue("@Quantity", int.Parse(txtSoLuong.Text));
-                            cmd.Parameters.AddWithValue("@Price", float.Parse(txtGia.Text));
-                            cmd.Parameters.AddWithValue("@Id", selectedId);
+                            double giaNhapVao = double.Parse(txtGia.Text);
+                            double giaVN = 0, giaUS = 0, giaTW = 0;
+
+                            if (LoginForm.SavedLanguage == "vi-VN") { giaVN = giaNhapVao; giaUS = giaNhapVao / 25000; giaTW = giaNhapVao / 800; }
+                            else if (LoginForm.SavedLanguage == "zh-Hant") { giaTW = giaNhapVao; giaVN = giaNhapVao * 800; giaUS = (giaNhapVao * 800) / 25000; }
+                            else { giaUS = giaNhapVao; giaVN = giaNhapVao * 25000; giaTW = (giaNhapVao * 25000) / 800; }
+
+                            cmd.Parameters.AddWithValue("@pName", txtTen.Text);
+                            cmd.Parameters.AddWithValue("@Qty", int.Parse(txtSoLuong.Text));
+                            cmd.Parameters.AddWithValue("@us", giaUS);
+                            cmd.Parameters.AddWithValue("@vn", giaVN);
+                            cmd.Parameters.AddWithValue("@tw", giaTW);
+                            cmd.Parameters.AddWithValue("@sId", selectedSalesId); // Điều kiện chuỗi
 
                             conn.Open();
                             cmd.ExecuteNonQuery();
@@ -273,7 +308,7 @@ namespace QuanLyKhoHang
                     LoadData(); // Tải lại bảng để thấy thay đổi
 
                     // Reset mọi thứ sau khi sửa xong
-                    selectedId = 0;
+                    selectedSalesId = "";
                     txtTen.Clear();
                     txtSoLuong.Clear();
                     txtGia.Clear();
@@ -328,7 +363,7 @@ namespace QuanLyKhoHang
             }
 
             // 3. Kiểm tra điều kiện đầu vào
-            if (selectedId == 0)
+            if (string.IsNullOrEmpty(selectedSalesId))
             {
                 MessageBox.Show(canhBaoChuaChon, tieuDeCanhBao, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -342,14 +377,12 @@ namespace QuanLyKhoHang
                 {
                     try
                     {
-                        string query = "DELETE FROM [Table] WHERE Id = @Id";
-
+                        string query = "DELETE FROM sales WHERE sales_id = @sId";
                         using (SqlConnection conn = new SqlConnection(connectionString))
                         {
                             using (SqlCommand cmd = new SqlCommand(query, conn))
                             {
-                                cmd.Parameters.AddWithValue("@Id", selectedId);
-
+                                cmd.Parameters.AddWithValue("@sId", selectedSalesId);
                                 conn.Open();
                                 cmd.ExecuteNonQuery();
                             }
@@ -358,7 +391,7 @@ namespace QuanLyKhoHang
                         MessageBox.Show("Đã xóa sản phẩm khỏi kho!", "Thông báo");
                         LoadData();
 
-                        selectedId = 0;
+                        selectedSalesId = "";
                         txtTen.Clear();
                         txtSoLuong.Clear();
                         txtGia.Clear();
@@ -389,7 +422,7 @@ namespace QuanLyKhoHang
                     txtTimKiem.Clear();
 
                     // 3. Đưa biến lưu ID về 0 (trạng thái chưa chọn gì cả)
-                    selectedId = 0;
+                    selectedSalesId = "";
 
                     // 4. Tải lại toàn bộ dữ liệu nguyên bản lên bảng
                     LoadData();
@@ -420,18 +453,22 @@ namespace QuanLyKhoHang
                     return;
                 }
 
+                string priceCol = "vn_price";
+                if (LoginForm.SavedLanguage == "zh-Hant") priceCol = "tw_price";
+                else if (LoginForm.SavedLanguage == "en") priceCol = "us_price";
+
                 // 2. Tách chuỗi dựa vào dấu phẩy (,), tự động bỏ qua các khoảng trắng thừa
                 string[] keywords = inputText.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
                 // 3. Khởi tạo câu lệnh SQL gốc (Mẹo: 1=1 luôn đúng, dùng để dễ dàng cộng dồn chữ AND ở dưới)
-                string query = "SELECT * FROM [Table] WHERE 1=1 ";
+                string query = $"SELECT sales_id, product_name, quantity, {priceCol} AS Price FROM sales WHERE 1=1 ";
 
                 // 4. Vòng lặp xây dựng câu lệnh SQL động cho từng từ khóa
                 for (int i = 0; i < keywords.Length; i++)
                 {
                     // Yêu cầu: 1 từ khóa có thể nằm ở Tên, HOẶC Số lượng, HOẶC Giá.
                     // Dùng CAST(...) để ép kiểu cột Số (int, float) sang Chữ (NVARCHAR) để xài được lệnh LIKE
-                    query += $" AND (Product_Name LIKE @kw{i} OR CAST(Quantity AS NVARCHAR(50)) LIKE @kw{i} OR CAST(Price AS NVARCHAR(50)) LIKE @kw{i})";
+                    query += $" AND (product_name LIKE @kw{i} OR CAST(quantity AS NVARCHAR(50)) LIKE @kw{i} OR CAST({priceCol} AS NVARCHAR(50)) LIKE @kw{i})";
                 }
 
                 // 5. Kết nối DB và nhồi dữ liệu thực tế vào các tham số @kw
@@ -470,12 +507,9 @@ namespace QuanLyKhoHang
                 // Kiểm tra xem người dùng có click vào dòng dữ liệu hợp lệ không (tránh click vào thanh tiêu đề cột)
                 if (e.RowIndex >= 0)
                 {
-                    // Lấy dòng đang được chọn
                     DataGridViewRow row = dgvSanPham.Rows[e.RowIndex];
-
-                    // Gán dữ liệu từ các cột tương ứng lên TextBox
-                    // Cột 0 là Id, Cột 1 là Product_Name, Cột 2 là Quantity, Cột 3 là Price
-                    selectedId = Convert.ToInt32(row.Cells[0].Value);
+                    // Lấy chuỗi trực tiếp, không ép kiểu Int32 nữa
+                    selectedSalesId = row.Cells[0].Value.ToString();
                     txtTen.Text = row.Cells[1].Value.ToString();
                     txtSoLuong.Text = row.Cells[2].Value.ToString();
                     txtGia.Text = row.Cells[3].Value.ToString();
@@ -484,8 +518,8 @@ namespace QuanLyKhoHang
             // Nếu có lỗi xảy ra, nhảy ngay vào đây để bắt lấy
             catch (Exception ex)
             {
-                // Hiện thông báo lỗi lịch sự thay vì làm văng app
-                MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message, "Hệ thống báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Gọi hàm báo lỗi đa ngôn ngữ 
+                ShowError(ex);
             }
         }
 
@@ -572,6 +606,7 @@ namespace QuanLyKhoHang
                 // Mặc định là English (hoặc ngôn ngữ gốc của hệ điều hành)
                 ChangeLanguage("en");
             }
+            LoadData();
             UpdateStatistics();
         }
 
@@ -587,7 +622,7 @@ namespace QuanLyKhoHang
                 thongBao = "Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?";
                 tieuDe = "Xác nhận đăng xuất";
             }
-            else if (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW")
+            else if (LoginForm.SavedLanguage == "zh-Hant")
             {
                 thongBao = "您確定要登出系統嗎？";
                 tieuDe = "確認登出";
@@ -647,7 +682,7 @@ namespace QuanLyKhoHang
             if (dgvSanPham.Rows.Count == 0)
             {
                 string msgTrong = LoginForm.SavedLanguage == "vi-VN" ? "Không có dữ liệu để xuất!" :
-                                  (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW" ? "沒有資料可匯出！" : "No data to export!");
+                                  (LoginForm.SavedLanguage == "zh-Hant" ? "沒有資料可匯出！" : "No data to export!");
                 string titleTrong = LoginForm.SavedLanguage == "vi-VN" ? "Thông báo" :
                                     (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW" ? "提示" : "Warning");
 
@@ -660,7 +695,7 @@ namespace QuanLyKhoHang
             sfd.Filter = "Excel Workbook|*.xlsx";
             sfd.FileName = "BaoCaoKhoHang.xlsx"; // Tên file mặc định khi lưu
             sfd.Title = LoginForm.SavedLanguage == "vi-VN" ? "Lưu báo cáo kho hàng" :
-                        (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW" ? "儲存庫存報告" : "Save Inventory Report");
+                        (LoginForm.SavedLanguage == "zh-Hant" ? "儲存庫存報告" : "Save Inventory Report");
 
             if (sfd.ShowDialog() == DialogResult.OK)
             {
@@ -709,9 +744,9 @@ namespace QuanLyKhoHang
 
                         // 5. Hiện thông báo thành công đa ngôn ngữ
                         string successMsg = LoginForm.SavedLanguage == "vi-VN" ? "Xuất file Excel thành công!" :
-                                           (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW" ? "匯出 Excel 成功！" : "Exported to Excel successfully!");
+                                           (LoginForm.SavedLanguage == "zh-Hant" ? "匯出 Excel 成功！" : "Exported to Excel successfully!");
                         string successTitle = LoginForm.SavedLanguage == "vi-VN" ? "Hoàn tất" :
-                                             (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW" ? "完成" : "Success");
+                                             (LoginForm.SavedLanguage == "zh-Hant" ? "完成" : "Success");
 
                         MessageBox.Show(successMsg, successTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }

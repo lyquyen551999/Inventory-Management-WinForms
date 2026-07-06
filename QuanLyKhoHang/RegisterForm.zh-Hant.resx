@@ -117,29 +117,29 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="lilbl_signup.Size" type="System.Drawing.Size, System.Drawing">
-    <value>33, 15</value>
-  </data>
-  <data name="lilbl_signup.Text" xml:space="preserve">
+  <data name="btnRegister.Text" xml:space="preserve">
     <value>註冊</value>
   </data>
-  <data name="lilbl_forgetpasswords.Size" type="System.Drawing.Size, System.Drawing">
-    <value>59, 15</value>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="lblEmail.Size" type="System.Drawing.Size, System.Drawing">
+    <value>39, 15</value>
   </data>
-  <data name="lilbl_forgetpasswords.Text" xml:space="preserve">
-    <value>忘記密碼</value>
+  <data name="lblEmail.Text" xml:space="preserve">
+    <value>郵件 :</value>
   </data>
-  <data name="btn_login.Text" xml:space="preserve">
-    <value>登入</value>
+  <data name="lblPass.Size" type="System.Drawing.Size, System.Drawing">
+    <value>39, 15</value>
   </data>
-  <data name="txtb_password.PlaceholderText" xml:space="preserve">
-    <value>密碼</value>
+  <data name="lblPass.Text" xml:space="preserve">
+    <value>密碼 :</value>
   </data>
-  <data name="txtb_id.PlaceholderText" xml:space="preserve">
-    <value>張號</value>
+  <data name="lblUser.Size" type="System.Drawing.Size, System.Drawing">
+    <value>39, 15</value>
+  </data>
+  <data name="lblUser.Text" xml:space="preserve">
+    <value>帳號 :</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>登入畫面</value>
+    <value>註冊畫面</value>
   </data>
 </root>

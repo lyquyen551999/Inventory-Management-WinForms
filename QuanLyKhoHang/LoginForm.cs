@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel;
 using System.Data;
+using Microsoft.Data.SqlClient;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Threading;
-using System.Globalization;
-using System.ComponentModel;
 
 namespace QuanLyKhoHang
 {
@@ -19,33 +20,43 @@ namespace QuanLyKhoHang
         {
             InitializeComponent();
             this.AcceptButton = btn_login;
+            this.Shown += LoginForm_Shown;
         }
 
-        private void btn_login_Click(object sender, EventArgs e)
+        private void AdjustSpacing()
         {
-            string id = txtb_id.Text;
-            string pass = txtb_password.Text;
+            // 1. Lấy tọa độ điểm giữa của cái Panel
+            int centerPanel = panel1.Width / 2;
 
-            // Kiểm tra tài khoản cứng (Hardcoded)
-            if (id == "quyen123" && pass == "quyen123")
-            {
-                // Trả về tín hiệu "Thành công" cho hệ thống biết
-                this.DialogResult = DialogResult.OK;
-                // Đóng form đăng nhập lại
-                this.Close();
-            }
-            else
-            {
-                // Thông báo lỗi nếu sai
-                MessageBox.Show("ID hoặc Password không đúng. Vui lòng thử lại!", "Lỗi Đăng Nhập", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                txtb_password.Clear(); // Xóa pass nhập sai
-                txtb_password.Focus(); // Đưa trỏ chuột về lại ô pass
-            }
+            // 2. Căn giữa tất cả các thành phần BÊN TRONG Panel
+            txtb_id.Left = centerPanel - (txtb_id.Width / 2);
+            txtb_password.Left = centerPanel - (txtb_password.Width / 2);
+            btn_login.Left = centerPanel - (btn_login.Width / 2);
+            lilbl_forgetpasswords.Left = centerPanel - (lilbl_forgetpasswords.Width / 2);
+            lilbl_signup.Left = centerPanel - (lilbl_signup.Width / 2);
+
+            // 3. BƯỚC CHỐT: Căn giữa toàn bộ cái Panel ở BÊN TRONG màn hình Form
+            panel1.Left = (this.ClientSize.Width - panel1.Width) / 2;
+            panel1.Top = (this.ClientSize.Height - panel1.Height) / 2;
+        }
+        private void ShowError(Exception ex)
+        {
+            // Xác định nội dung lỗi dựa trên ngôn ngữ đang chọn
+            string errorMsg = LoginForm.SavedLanguage == "vi-VN" ? "Lỗi hệ thống: " :
+                              (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW" ? "系統錯誤: " : "System Error: ");
+
+            // Xác định tiêu đề dựa trên ngôn ngữ đang chọn
+            string errorTitle = LoginForm.SavedLanguage == "vi-VN" ? "Hệ thống báo lỗi" :
+                                (LoginForm.SavedLanguage == "zh-Hant" || LoginForm.SavedLanguage == "zh-Hant-TW" ? "系統提示" : "Error");
+
+            MessageBox.Show(errorMsg + ex.Message, errorTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private void LoginForm_Shown(object sender, EventArgs e)
         {
             this.ActiveControl = null;
+            this.PerformLayout();
+            AdjustSpacing();
         }
         // Hàm đệ quy để quét sạch mọi control, kể cả những control nằm sâu trong Panel
         private void ApplyResourcesToControls(Control.ControlCollection controls, ComponentResourceManager resources)
@@ -126,6 +137,75 @@ namespace QuanLyKhoHang
                 // Mặc định là English (hoặc ngôn ngữ gốc của hệ điều hành)
                 ChangeLanguage("en");
             }
+            AdjustSpacing();
+        }
+
+        private void btn_login_Click_1(object sender, EventArgs e)
+        {
+            // 1. Kiểm tra không cho để trống
+            if (string.IsNullOrWhiteSpace(txtb_id.Text) || string.IsNullOrWhiteSpace(txtb_password.Text))
+            {
+                string msgEmpty = SavedLanguage == "vi-VN" ? "Vui lòng nhập tài khoản và mật khẩu!" :
+                                  (SavedLanguage == "zh-Hant" ? "請輸入帳號和密碼！" : "Please enter username and password!");
+                MessageBox.Show(msgEmpty, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 2. Kết nối tới DB sales.mdf
+            string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\lyquy\Source\Repos\Inventory-Management-WinForms\QuanLyKhoHang\sales.mdf;Integrated Security=True";
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    // 3. Viết câu lệnh truy vấn tìm user_id và passwords trong bảng users
+                    // Dùng hàm RTRIM trong SQL để cắt dấu cách thừa của kiểu nchar(10)
+                    string query = "SELECT COUNT(*) FROM users WHERE RTRIM(user_id) = @user AND RTRIM(passwords) = @pass";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        // Dùng .Trim() ở C# để cắt dấu cách do người dùng lỡ tay gõ vào
+                        cmd.Parameters.AddWithValue("@user", txtb_id.Text.Trim());
+                        cmd.Parameters.AddWithValue("@pass", txtb_password.Text.Trim());
+
+                        // Lấy kết quả đếm xem có bao nhiêu tài khoản khớp
+                        int count = Convert.ToInt32(cmd.ExecuteScalar());
+
+                        if (count > 0)
+                        {
+                            // Trả về tín hiệu "Thành công" cho hệ thống biết
+                            this.DialogResult = DialogResult.OK;
+                            // Đóng form đăng nhập lại
+                            this.Close();
+                        }
+                        else
+                        {
+                            // Đăng nhập thất bại (Sai user hoặc pass)
+                            string msgFail = SavedLanguage == "vi-VN" ? "Tài khoản hoặc mật khẩu không chính xác!" :
+                                             (SavedLanguage == "zh-Hant" ? "帳號或密碼不正確！" : "Invalid username or password!");
+                            string titleFail = SavedLanguage == "vi-VN" ? "Lỗi đăng nhập" : (SavedLanguage == "zh-Hant" ? "登入失敗" : "Login Failed");
+
+                            MessageBox.Show(msgFail, titleFail, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError(ex);
+            }
+        }
+
+        private void lilbl_forgetpasswords_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            new ForgotPasswordForm().ShowDialog();
+        }
+
+        private void lilbl_signup_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            new RegisterForm().ShowDialog();
         }
     }
 }

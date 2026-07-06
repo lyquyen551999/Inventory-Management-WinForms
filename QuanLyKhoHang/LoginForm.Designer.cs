@@ -29,16 +29,55 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoginForm));
-            txtb_id = new TextBox();
-            txtb_password = new TextBox();
-            btn_login = new Button();
             cbxlanguage = new ComboBox();
+            panel1 = new Panel();
+            lilbl_signup = new LinkLabel();
+            lilbl_forgetpasswords = new LinkLabel();
+            btn_login = new Button();
+            txtb_password = new TextBox();
+            txtb_id = new TextBox();
+            panel1.SuspendLayout();
             SuspendLayout();
             // 
-            // txtb_id
+            // cbxlanguage
             // 
-            resources.ApplyResources(txtb_id, "txtb_id");
-            txtb_id.Name = "txtb_id";
+            resources.ApplyResources(cbxlanguage, "cbxlanguage");
+            cbxlanguage.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbxlanguage.FormattingEnabled = true;
+            cbxlanguage.Items.AddRange(new object[] { resources.GetString("cbxlanguage.Items"), resources.GetString("cbxlanguage.Items1"), resources.GetString("cbxlanguage.Items2") });
+            cbxlanguage.Name = "cbxlanguage";
+            cbxlanguage.SelectedIndexChanged += cbxlanguage_SelectedIndexChanged;
+            // 
+            // panel1
+            // 
+            resources.ApplyResources(panel1, "panel1");
+            panel1.Controls.Add(lilbl_signup);
+            panel1.Controls.Add(lilbl_forgetpasswords);
+            panel1.Controls.Add(btn_login);
+            panel1.Controls.Add(txtb_password);
+            panel1.Controls.Add(txtb_id);
+            panel1.Name = "panel1";
+            // 
+            // lilbl_signup
+            // 
+            resources.ApplyResources(lilbl_signup, "lilbl_signup");
+            lilbl_signup.Name = "lilbl_signup";
+            lilbl_signup.TabStop = true;
+            lilbl_signup.LinkClicked += lilbl_signup_LinkClicked_1;
+            // 
+            // lilbl_forgetpasswords
+            // 
+            resources.ApplyResources(lilbl_forgetpasswords, "lilbl_forgetpasswords");
+            lilbl_forgetpasswords.Name = "lilbl_forgetpasswords";
+            lilbl_forgetpasswords.TabStop = true;
+            lilbl_forgetpasswords.LinkClicked += lilbl_forgetpasswords_LinkClicked_1;
+            // 
+            // btn_login
+            // 
+            resources.ApplyResources(btn_login, "btn_login");
+            btn_login.Name = "btn_login";
+            btn_login.UseVisualStyleBackColor = true;
+            btn_login.Click += btn_login_Click_1;
             // 
             // txtb_password
             // 
@@ -46,42 +85,32 @@
             txtb_password.Name = "txtb_password";
             txtb_password.UseSystemPasswordChar = true;
             // 
-            // btn_login
+            // txtb_id
             // 
-            resources.ApplyResources(btn_login, "btn_login");
-            btn_login.Name = "btn_login";
-            btn_login.UseVisualStyleBackColor = true;
-            btn_login.Click += btn_login_Click;
-            // 
-            // cbxlanguage
-            // 
-            cbxlanguage.DropDownStyle = ComboBoxStyle.DropDownList;
-            cbxlanguage.FormattingEnabled = true;
-            cbxlanguage.Items.AddRange(new object[] { resources.GetString("cbxlanguage.Items"), resources.GetString("cbxlanguage.Items1"), resources.GetString("cbxlanguage.Items2") });
-            resources.ApplyResources(cbxlanguage, "cbxlanguage");
-            cbxlanguage.Name = "cbxlanguage";
-            cbxlanguage.SelectedIndexChanged += cbxlanguage_SelectedIndexChanged;
+            resources.ApplyResources(txtb_id, "txtb_id");
+            txtb_id.Name = "txtb_id";
             // 
             // LoginForm
             // 
             resources.ApplyResources(this, "$this");
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(panel1);
             Controls.Add(cbxlanguage);
-            Controls.Add(btn_login);
-            Controls.Add(txtb_password);
-            Controls.Add(txtb_id);
             Name = "LoginForm";
             Load += LoginForm_Load;
             Shown += LoginForm_Shown;
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
-
-        private TextBox txtb_id;
-        private TextBox txtb_password;
-        private Button btn_login;
         private ComboBox cbxlanguage;
+        private Panel panel1;
+        private LinkLabel lilbl_signup;
+        private LinkLabel lilbl_forgetpasswords;
+        private Button btn_login;
+        private TextBox txtb_password;
+        private TextBox txtb_id;
     }
 }
